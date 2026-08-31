@@ -1,0 +1,165 @@
+{
+  "stunting_risk": {
+    "title": "Protein & Linear Growth Fortification Plan",
+    "summary": "Focuses on high-quality proteins, calcium, and zinc to support linear bone development and height velocity.",
+    "recommendations": [
+      "Include dairy daily: 1-2 glasses of boiled milk, fresh paneer, or set curd (dahi).",
+      "Incorporate protein-dense pulses and legumes: sprouted moong, boiled chana, rajma, and soya chunks.",
+      "Add calcium-rich traditional grains: ragi (finger millet) porridge/dosas and sesame (til) chikki or laddoos.",
+      "Consume seasonal eggs (boiled or scrambled) or local fresh fish for non-vegetarian children.",
+      "Ensure adequate sun exposure (15-20 minutes daily) for natural vitamin D synthesis supporting calcium absorption."
+    ],
+    "focus_nutrients": [
+      "High Biological Value Protein",
+      "Calcium",
+      "Zinc",
+      "Vitamin D",
+      "Phosphorus"
+    ]
+  },
+  "severe_stunting": {
+    "title": "Intensive Linear Growth & Micronutrient Recovery Plan",
+    "summary": "Targeted clinical nutritional support to address severe height deficits with micronutrient-fortified indigenous meals.",
+    "recommendations": [
+      "Daily fortified dairy: 2 full glasses of warm milk enriched with roasted ragi or almond powder, plus fresh paneer.",
+      "Dual-pulse combinations: Dal enriched with moringa (drumstick) leaves, spinach, and sprouted beans.",
+      "Animal proteins: 1 boiled egg daily or fish curry twice weekly for optimal amino acid profile.",
+      "Zinc and iron sources: Roasted pumpkin seeds, roasted Bengal gram (chana), and jaggery snacks.",
+      "Consult a pediatrician or pediatric nutritionist for targeted micronutrient supplements (Zinc, Vitamin D3, Iron)."
+    ],
+    "focus_nutrients": [
+      "Essential Amino Acids",
+      "Bioavailable Zinc",
+      "Calcium",
+      "Vitamin D3",
+      "Iron"
+    ]
+  },
+  "underweight_risk": {
+    "title": "Energy-Dense Nourishment & Healthy Weight Gain Plan",
+    "summary": "Increases caloric and nutrient density through wholesome traditional Indian foods without refined sugars or junk food.",
+    "recommendations": [
+      "Add healthy fats: Add 1-2 teaspoons of pure desi cow ghee or cold-pressed mustard/groundnut oil to hot dal, rice, or khichdi.",
+      "Nutrient-rich snacks: Banana with peanut butter or jaggery, mixed roasted nuts (almonds, walnuts), and roasted makhanas (fox nuts).",
+      "Wholesome meal schedule: 3 balanced main meals supplemented with 2 wholesome mid-morning and evening snacks.",
+      "Calorie-dense porridges: Suji (semolina) kheer or ragi malt prepared with full-cream milk and crushed nuts.",
+      "Enriched khichdi: Moong dal khichdi loaded with mixed seasonal vegetables (carrots, green peas, pumpkin) and generous ghee."
+    ],
+    "focus_nutrients": [
+      "Healthy Monounsaturated Fats",
+      "Complex Carbohydrates",
+      "Dietary Protein",
+      "Iron",
+      "B-Complex Vitamins"
+    ]
+  },
+  "severe_underweight": {
+    "title": "High-Calorie Intensive Recovery & Muscle Mass Plan",
+    "summary": "Urgent therapeutic dietary schedule to rebuild body mass, immune resilience, and vital tissue reserves.",
+    "recommendations": [
+      "Nutrient-dense liquid meals: Sattu drink with milk/curd, homemade peanut-banana milkshakes, and whole milk paneer puree.",
+      "Ghee-enriched staples: Generous pure ghee added to all warm meals including dalia (broken wheat), parathas, and rice dishes.",
+      "Frequent feeding: Provide small, highly nourishing energy-dense meals every 2.5 to 3 hours.",
+      "High-energy traditional snacks: Dry fruit laddoos made with dates, almonds, sesame seeds, and ghee (no refined sugar).",
+      "Urgent medical consultation with primary health care worker or pediatric clinic for growth monitoring."
+    ],
+    "focus_nutrients": [
+      "Caloric Density",
+      "Complete Proteins",
+      "Essential Fatty Acids",
+      "Vitamins A, C, and E",
+      "Electrolytes & Trace Minerals"
+    ]
+  },
+  "thinness_risk": {
+    "title": "Muscle Mass & Acute Nourishment Recovery Plan",
+    "summary": "Restores balanced body mass index through easily digestible protein-carbohydrate combinations and gut health support.",
+    "recommendations": [
+      "High-protein grain blends: Multigrain rotis (wheat, jowar, gram flour/besan) with seasonal sabzi and thick dal.",
+      "Digestible protein: Fresh curd/buttermilk (chaas), sprouted moong chaat with lemon juice, and boiled egg whites.",
+      "Wholesome breakfast: Poha or upma garnished with roasted groundnuts, boiled sprouts, and fresh coriander.",
+      "Hydration with electrolytes: Tender coconut water and homemade lemon water with a pinch of rock salt.",
+      "Ensure boiled or filtered drinking water to prevent gastrointestinal infections and optimize nutrient absorption."
+    ],
+    "focus_nutrients": [
+      "Digestible Protein",
+      "Essential Amino Acids",
+      "Dietary Iron",
+      "Probiotics",
+      "Hydration"
+    ]
+  },
+  "severe_thinness": {
+    "title": "Therapeutic Nutritional Rehabilitation Plan",
+    "summary": "Immediate nutritional rehabilitation designed to reverse severe acute wasting and replenish muscle glycogen.",
+    "recommendations": [
+      "Energy-dense soft foods: Soft-cooked moong dal and rice mash enriched with butter/ghee and mashed sweet potato.",
+      "Concentrated protein: Daily boiled eggs, fresh paneer bhurji, or roasted besan sheera prepared with milk.",
+      "Frequent hydration: Offer buttermilk (chaas) enriched with roasted cumin and mineral-rich soups (tomato-lentil broth).",
+      "Gentle digestive care: Avoid spicy, fried, or ultra-processed foods that may cause indigestion or diarrhea.",
+      "Immediate clinical evaluation at nearest health camp or Primary Health Centre (PHC)."
+    ],
+    "focus_nutrients": [
+      "Therapeutic Caloric Density",
+      "High-Grade Protein",
+      "Trace Minerals",
+      "Bioavailable Iron",
+      "Vitamin A"
+    ]
+  },
+  "overweight_risk": {
+    "title": "Balanced Fiber-Rich & Active Lifestyle Nutrition Plan",
+    "summary": "Promotes whole foods, complex dietary fiber, and active metabolism while curbing ultra-processed snacks and added sugars.",
+    "recommendations": [
+      "Switch to whole millets & unpolished grains: Jowar, bajra, ragi rotis, and brown/hand-pounded rice instead of refined maida.",
+      "Salad before meals: Fresh sliced cucumbers, carrots, and tomatoes with lemon dressing prior to lunch and dinner.",
+      "Eliminate sugary beverages: Avoid sodas, packaged juices, and commercial sweets; replace with water, chaas, or lemon water.",
+      "Healthy evening snacks: Roasted makhanas, boiled corn chaat, or roasted chana instead of deep-fried packaged chips.",
+      "Promote 45-60 minutes of daily physical play, cycling, running, or outdoor games."
+    ],
+    "focus_nutrients": [
+      "Dietary Fiber",
+      "Antioxidants",
+      "Low Glycemic Carbohydrates",
+      "Lean Protein",
+      "Hydration"
+    ]
+  },
+  "obesity_risk": {
+    "title": "Metabolic Health & Whole Foods Nutrition Plan",
+    "summary": "Structured nutritional guidelines focused on whole grains, portion mindfulness, hydration, and regular aerobic activity.",
+    "recommendations": [
+      "High-fiber plate rule: Ensure 50% of the meal plate consists of fresh green vegetables, salads, and seasonal fruits.",
+      "Strict avoidance of ultra-processed food: Eliminate bakery goods, sugary packaged cereals, fried snacks, and sodas.",
+      "Healthy cooking methods: Prefer steaming, boiling, pressure cooking, and light roasting over deep frying.",
+      "Scheduled meal timing: Avoid late-night snacking and ensure dinner is completed at least 2 hours before bedtime.",
+      "Encourage structured daily sports, yoga, swimming, or active outdoor games for at least 60 minutes.",
+      "Consult a healthcare professional to monitor metabolic health indicators."
+    ],
+    "focus_nutrients": [
+      "Dietary Fiber",
+      "Antioxidants & Phytochemicals",
+      "Potassium",
+      "Magnesium",
+      "Clean Water Hydration"
+    ]
+  },
+  "normal_growth": {
+    "title": "Balanced Regional Indian Nutrition & Maintenance Plan",
+    "summary": "Maintains optimal child growth, cognitive vitality, and immune strength with a diverse traditional diet.",
+    "recommendations": [
+      "Balanced Indian Thali: Maintain a daily plate of whole grain roti/rice, green vegetables, dal/pulses, and fresh curd.",
+      "Daily fresh fruit: Include 1 whole seasonal fruit (papaya, guava, banana, apple, or orange) between meals.",
+      "Stay hydrated: Drink 6-8 glasses of clean water daily, supplemented with fresh buttermilk (chaas) or coconut water.",
+      "Snack smart: Prefer wholesome homemade snacks such as roasted murmura, roasted peanuts, chana, and fruits.",
+      "Maintain active daily outdoor sports and at least 8 hours of restful sleep every night."
+    ],
+    "focus_nutrients": [
+      "Balanced Macronutrients",
+      "Essential Vitamins",
+      "Minerals & Trace Elements",
+      "Dietary Fiber",
+      "Adequate Hydration"
+    ]
+  }
+}

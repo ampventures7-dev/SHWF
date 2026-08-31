@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Complete Health Check-Up Report</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 4mm 5mm 4mm 5mm;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  body {
+    font-size: 8.2px;
+    color: #1a1a1a;
+    background-color: #ffffff;
+    line-height: 1.15;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .report-page {
+    width: 100%;
+    max-width: 200mm;
+    margin: 0 auto;
+    border: 1.5px solid #0d47a1;
+    border-radius: 4px;
+    padding: 4px 6px;
+    background: #fff;
+  }
+  
+  /* Header Section */
+  .top-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8.5px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .top-meta-center {
+    flex-grow: 1;
+    text-align: center;
+    color: #1b5e20;
+    font-size: 9.5px;
+  }
+  .reg-box {
+    border: 1px solid #1a237e;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 7.5px;
+    font-weight: 600;
+    color: #0d47a1;
+  }
+  .header-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1px 4px 3px 4px;
+  }
+  .emblem-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 65px;
+    text-align: center;
+  }
+  .emblem-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .emblem-text {
+    font-size: 6.5px;
+    font-weight: 700;
+    color: #212121;
+    line-height: 1.1;
+    margin-top: 1px;
+  }
+  .foundation-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .logo-symbol {
+    width: 32px;
+    height: 32px;
+    margin-bottom: -2px;
+  }
+  .logo-title {
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+    line-height: 1;
+  }
+  .logo-title .blue { color: #0d47a1; }
+  .logo-title .green { color: #2e7d32; }
+  .logo-subtitle {
+    font-size: 8.5px;
+    font-weight: 800;
+    color: #e65100;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+  
+  /* Main Banner */
+  .main-banner {
+    background: #0d47a1;
+    color: #ffffff;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 3px 0;
+    border-radius: 4px;
+    margin: 2px 0 4px 0;
+    text-transform: uppercase;
+  }
+
+  /* Section Styles */
+  .section-card {
+    border: 1px solid #90caf9;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    padding: 3px 5px;
+    background: #ffffff;
+  }
+  .section-card.green-theme { border-color: #a5d6a7; }
+  .section-card.orange-theme { border-color: #ffcc80; }
+  .section-card.purple-theme { border-color: #ce93d8; }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    font-size: 8.5px;
+    font-weight: 800;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    gap: 4px;
+  }
+  .section-header.green { color: #2e7d32; }
+  .section-header.blue { color: #0d47a1; }
+  .section-header.purple { color: #6a1b9a; }
+  .section-header.orange { color: #e65100; }
+  .section-header.cyan { color: #00838f; }
+  
+  /* Checkboxes */
+  .cb {
+    display: inline-block;
+    width: 8.5px;
+    height: 8.5px;
+    border: 1px solid #424242;
+    border-radius: 1.5px;
+    vertical-align: middle;
+    margin-right: 2px;
+    margin-left: 2px;
+    text-align: center;
+    line-height: 7.5px;
+    font-size: 7.5px;
+    font-weight: bold;
+    color: #0d47a1;
+  }
+  .cb.checked {
+    background-color: #e8eaf6;
+  }
+
+  /* Student Info Grid */
+  .student-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1.2fr 52px;
+    gap: 6px;
+    align-items: start;
+  }
+  .kv-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .kv-table td {
+    padding: 1px 0;
+    font-size: 7.8px;
+    vertical-align: middle;
+  }
+  .kv-label {
+    font-weight: 700;
+    color: #212121;
+    width: 78px;
+    white-space: nowrap;
+  }
+  .kv-val {
+    color: #000;
+    border-bottom: 1px dotted #9e9e9e;
+    padding-left: 2px;
+    min-height: 11px;
+  }
+  .photo-box {
+    border: 1px solid #9e9e9e;
+    border-radius: 3px;
+    height: 62px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    color: #757575;
+    font-size: 7px;
+    font-weight: 700;
+  }
+  .photo-box svg {
+    width: 24px;
+    height: 24px;
+    fill: #9e9e9e;
+    margin-bottom: 2px;
+  }
+
+  /* 2-Column Main Exams */
+  .two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 3px;
+  }
+  .exam-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8px 0;
+    font-size: 7.6px;
+  }
+  .exam-label {
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .exam-num {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    background: #2e7d32;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 11px;
+    font-size: 6.5px;
+    font-weight: bold;
+  }
+  .exam-num.blue { background: #0d47a1; }
+  .exam-num.purple { background: #6a1b9a; }
+  .val-box {
+    border: 1px solid #757575;
+    border-radius: 2px;
+    padding: 0.5px 3px;
+    min-width: 46px;
+    height: 12px;
+    font-size: 7.5px;
+    text-align: center;
+    background: #fff;
+    color: #000;
+    font-weight: 600;
+  }
+  .val-box.wide { min-width: 70px; }
+
+  /* Sub-cards inside right col */
+  .sub-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    padding: 2px 4px;
+    margin-bottom: 3px;
+    background: #fafafa;
+  }
+  .sub-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  /* Tables */
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7.2px;
+    text-align: center;
+    margin-top: 2px;
+  }
+  .report-table th, .report-table td {
+    border: 1px solid #64b5f6;
+    padding: 1.5px 2px;
+  }
+  .report-table th {
+    background: #e3f2fd;
+    color: #0d47a1;
+    font-weight: 700;
+    font-size: 6.8px;
+  }
+  .report-table td {
+    font-weight: 600;
+  }
+
+  /* 3-Column Screenings */
+  .three-col-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr 1.05fr;
+    gap: 4px;
+    margin-bottom: 3px;
+  }
+
+  /* Dietitian Advice */
+  .diet-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1.35fr;
+    gap: 6px;
+    font-size: 7.5px;
+  }
+  .diet-cbs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5px;
+  }
+  .dotted-area {
+    border-left: 1px solid #ffcc80;
+    padding-left: 5px;
+    font-size: 7.2px;
+    color: #212121;
+    line-height: 1.25;
+  }
+  .dotted-line {
+    border-bottom: 1px dotted #bdbdbd;
+    min-height: 12px;
+    padding: 0.5px 0;
+  }
+
+  /* Bottom Sign-off */
+  .sign-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 48px;
+    gap: 4px;
+    align-items: center;
+    margin-top: 3px;
+    text-align: center;
+  }
+  .sign-box {
+    border: 1px solid #9e9e9e;
+    border-radius: 3px;
+    height: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2px;
+    font-size: 6.5px;
+    font-weight: 600;
+    color: #616161;
+    background: #fff;
+  }
+  .qr-box {
+    border: 1px solid #0d47a1;
+    border-radius: 3px;
+    height: 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 5px;
+    font-weight: 700;
+    color: #0d47a1;
+    background: #fff;
+    padding: 1px;
+  }
+  .qr-box svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Footer bar */
+  .footer-bar {
+    background: #0d47a1;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2.5px 4px;
+    border-radius: 3px;
+    font-size: 7.2px;
+    font-weight: 600;
+    margin-top: 3px;
+  }
+  .footer-tagline {
+    text-align: center;
+    font-size: 7.5px;
+    font-weight: 800;
+    color: #2e7d32;
+    margin-top: 1px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="report-page">
+
+  <!-- Top Metadata -->
+  <div class="top-meta">
+    <div></div>
+    <div class="top-meta-center">॥ नमामि देवी नर्मदे ॥</div>
+    <div class="reg-box">Reg. No. 04/16/03/20319/24</div>
+  </div>
+
+  <!-- Header Branding -->
+  <div class="header-main">
+    <!-- Left Emblem -->
+    <div class="emblem-block">
+      <svg class="emblem-icon" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#e65100" stroke-width="6"/>
+        <path d="M 25 50 Q 50 20 75 50 Q 50 80 25 50 Z" fill="#2e7d32"/>
+        <circle cx="50" cy="50" r="14" fill="#0d47a1"/>
+      </svg>
+      <div class="emblem-text">स्वस्थ भारत मिशन<br><span style="color:#0d47a1;">आत्मनिर्भर भारत</span></div>
+    </div>
+
+    <!-- Center Logo -->
+    <div class="foundation-logo">
+      <svg class="logo-symbol" viewBox="0 0 100 100">
+        <path d="M 50 15 C 30 15 15 35 15 55 C 15 75 40 90 50 95 C 60 90 85 75 85 55 C 85 35 70 15 50 15 Z" fill="none" stroke="#2e7d32" stroke-width="6"/>
+        <circle cx="50" cy="40" r="10" fill="#e65100"/>
+        <path d="M 30 65 Q 50 45 70 65" stroke="#0d47a1" stroke-width="6" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="logo-title"><span class="blue">Smart</span><span class="green">Health</span></div>
+      <div class="logo-subtitle">Welfare Foundation</div>
+    </div>
+
+    <!-- Right Emblem -->
+    <div class="emblem-block">
+      <svg class="emblem-icon" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#e65100" stroke-width="6"/>
+        <path d="M 25 50 Q 50 20 75 50 Q 50 80 25 50 Z" fill="#2e7d32"/>
+        <circle cx="50" cy="50" r="14" fill="#0d47a1"/>
+      </svg>
+      <div class="emblem-text">स्वस्थ भारत मिशन<br><span style="color:#0d47a1;">आत्मनिर्भर भारत</span></div>
+    </div>
+  </div>
+
+  <!-- Banner -->
+  <div class="main-banner">Student Complete Health Check-Up Report</div>
+
+  <!-- 1. Student Information -->
+  <div class="section-card green-theme">
+    <div class="section-header green">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="#2e7d32"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      Student Information
+    </div>
+    <div class="student-grid">
+      <!-- Col 1 -->
+      <table class="kv-table">
+        <tr>
+          <td class="kv-label">School Name</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.school_name or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Student Name</td>
+          <td>:</td>
+          <td class="kv-val" style="font-weight: 700;">{{ student.full_name or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Father's Name</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.father_name or student.parent_name or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Mother's Name</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.mother_name or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Class / Section</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.class_name or "N/A" }} &nbsp;/&nbsp; {{ student.section or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Roll No. / Student ID</td>
+          <td>:</td>
+          <td class="kv-val" style="font-weight: 700; color: #0d47a1;">{{ student.student_id or "N/A" }}</td>
+        </tr>
+      </table>
+
+      <!-- Col 2 -->
+      <table class="kv-table">
+        <tr>
+          <td class="kv-label">Date of Birth</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.date_of_birth or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Age / Gender</td>
+          <td>:</td>
+          <td class="kv-val">
+            {{ student.age_display or (vitals.age_months ~ " months") }} &nbsp;|&nbsp;
+            <span class="cb {% if student.gender == 'M' %}checked{% endif %}">{% if student.gender == 'M' %}✓{% endif %}</span> M
+            <span class="cb {% if student.gender == 'F' %}checked{% endif %}">{% if student.gender == 'F' %}✓{% endif %}</span> F
+            <span class="cb {% if student.gender == 'O' %}checked{% endif %}">{% if student.gender == 'O' %}✓{% endif %}</span> O
+          </td>
+        </tr>
+        <tr>
+          <td class="kv-label">Address</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.address or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Parent Contact</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.parent_phone or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Emergency Contact</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.emergency_contact or student.parent_phone or "N/A" }}</td>
+        </tr>
+        <tr>
+          <td class="kv-label">Aadhaar (Optional)</td>
+          <td>:</td>
+          <td class="kv-val">{{ student.aadhaar_no or "N/A" }}</td>
+        </tr>
+      </table>
+
+      <!-- Col 3: Photo -->
+      <div class="photo-box">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        PHOTO
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Physical & General & Dental & ENT Examinations -->
+  <div class="two-col-grid">
+    <!-- Left: Physical Examination -->
+    <div class="section-card green-theme">
+      <div class="section-header green">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#2e7d32"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        Physical Examination
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">1</span> Height</div>
+        <div class="val-box">{{ vitals.height_cm }} cm</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">2</span> Weight</div>
+        <div class="val-box">{{ vitals.weight_kg }} kg</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">3</span> Body Mass Index (BMI)</div>
+        <div class="val-box">{{ vitals.bmi }} kg/m²</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">4</span> Pallor</div>
+        <div>
+          <span class="cb {% if physical.pallor %}checked{% endif %}">{% if physical.pallor %}✓{% endif %}</span> Yes
+          <span class="cb {% if not physical.pallor %}checked{% endif %}">{% if not physical.pallor %}✓{% endif %}</span> No
+        </div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">5</span> Jaundice</div>
+        <div>
+          <span class="cb {% if physical.jaundice %}checked{% endif %}">{% if physical.jaundice %}✓{% endif %}</span> Yes
+          <span class="cb {% if not physical.jaundice %}checked{% endif %}">{% if not physical.jaundice %}✓{% endif %}</span> No
+        </div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">6</span> Clubbing</div>
+        <div>
+          <span class="cb {% if physical.clubbing %}checked{% endif %}">{% if physical.clubbing %}✓{% endif %}</span> Yes
+          <span class="cb {% if not physical.clubbing %}checked{% endif %}">{% if not physical.clubbing %}✓{% endif %}</span> No
+        </div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">7</span> SpO₂ (Oxygen Saturation)</div>
+        <div class="val-box">{{ physical.spo2 or "99" }} %</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">8</span> LAP (Lymphadenopathy)</div>
+        <div>
+          <span class="cb {% if physical.lap %}checked{% endif %}">{% if physical.lap %}✓{% endif %}</span> Yes
+          <span class="cb {% if not physical.lap %}checked{% endif %}">{% if not physical.lap %}✓{% endif %}</span> No
+        </div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">9</span> Skin</div>
+        <div class="val-box wide">{{ physical.skin or "Clear / Normal" }}</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">10</span> Allergy</div>
+        <div>
+          <span class="cb {% if physical.allergy %}checked{% endif %}">{% if physical.allergy %}✓{% endif %}</span> Yes
+          <span class="cb {% if not physical.allergy %}checked{% endif %}">{% if not physical.allergy %}✓{% endif %}</span> No
+        </div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label" style="padding-left: 14px;">If Yes, Specify:</div>
+        <div class="val-box wide">{{ physical.allergy_specify or "None" }}</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">11</span> Nutrition Status</div>
+        <div class="val-box wide">{{ physical.nutrition or "Adequate" }}</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">12</span> Heart Sound</div>
+        <div class="val-box wide">{{ physical.heart_sound or "Normal S1 S2" }}</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">13</span> Chest</div>
+        <div class="val-box wide">{{ physical.chest or "Clear" }}</div>
+      </div>
+      <div class="exam-row">
+        <div class="exam-label"><span class="exam-num">14</span> Other Findings</div>
+        <div class="val-box wide">{{ physical.other_findings or "None" }}</div>
+      </div>
+    </div>
+
+    <!-- Right: General + Dental + ENT -->
+    <div>
+      <!-- General Examination -->
+      <div class="section-card">
+        <div class="section-header blue">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="#0d47a1"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          General Examination
+        </div>
+        <div class="exam-row">
+          <div class="exam-label"><span class="exam-num blue">1</span> Temperature</div>
+          <div class="val-box">{{ general.temperature or "98.4" }} °F</div>
+        </div>
+        <div class="exam-row">
+          <div class="exam-label"><span class="exam-num blue">2</span> Pulse</div>
+          <div class="val-box">{{ general.pulse or "78" }} /min</div>
+        </div>
+        <div class="exam-row">
+          <div class="exam-label"><span class="exam-num blue">3</span> Respiration</div>
+          <div class="val-box">{{ general.respiration or "18" }} /min</div>
+        </div>
+        <div class="exam-row">
+          <div class="exam-label"><span class="exam-num blue">4</span> Blood Pressure</div>
+          <div class="val-box">{{ general.blood_pressure or "110/70" }} mmHg</div>
+        </div>
+        <div class="exam-row">
+          <div class="exam-label"><span class="exam-num blue">5</span> Last Deworming Date</div>
+          <div class="val-box wide">{{ general.last_deworming or "N/A" }}</div>
+        </div>
+      </div>
+
+      <!-- Dental & ENT Subgrid -->
+      <div class="sub-grid">
+        <!-- Dental -->
+        <div class="section-card" style="border-color:#80deea;">
+          <div class="section-header cyan">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="#00838f"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14h2v2h-2zm0-10h2v8h-2z"/></svg>
+            Dental / Oral
+          </div>
+          <div style="font-size: 7.2px;">
+            <div style="margin-bottom: 2px;">
+              <b>1 Dental:</b> 
+              <span class="cb {% if dental.status == 'Good' or not dental.status %}checked{% endif %}">{% if dental.status == 'Good' or not dental.status %}✓{% endif %}</span> Good
+              <span class="cb {% if dental.status == 'Fair' %}checked{% endif %}">{% if dental.status == 'Fair' %}✓{% endif %}</span> Fair
+              <span class="cb {% if dental.status == 'Poor' %}checked{% endif %}">{% if dental.status == 'Poor' %}✓{% endif %}</span> Poor
+            </div>
+            <div style="margin-bottom: 2px;">
+              <b>2 Caries:</b>
+              <span class="cb {% if dental.caries %}checked{% endif %}">{% if dental.caries %}✓{% endif %}</span> Yes
+              <span class="cb {% if not dental.caries %}checked{% endif %}">{% if not dental.caries %}✓{% endif %}</span> No
+            </div>
+            <div style="margin-bottom: 2px;"><b>3 Gum:</b> {{ dental.gum_condition or "Healthy" }}</div>
+            <div><b>4 Other:</b> {{ dental.other_findings or "None" }}</div>
+          </div>
+        </div>
+
+        <!-- ENT -->
+        <div class="section-card purple-theme">
+          <div class="section-header purple">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="#6a1b9a"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/></svg>
+            E.N.T. Exam
+          </div>
+          <div style="font-size: 7.2px;">
+            <div class="exam-row" style="padding:0;"><span class="exam-label"><span class="exam-num purple">1</span> Nose</span> <span>{{ ent.nose or "Normal" }}</span></div>
+            <div class="exam-row" style="padding:0;"><span class="exam-label"><span class="exam-num purple">2</span> Throat</span> <span>{{ ent.throat or "Clear" }}</span></div>
+            <div class="exam-row" style="padding:0;"><span class="exam-label"><span class="exam-num purple">3</span> Ear (R)</span> <span>{{ ent.ear_right or "Normal" }}</span></div>
+            <div class="exam-row" style="padding:0;"><span class="exam-label"><span class="exam-num purple">4</span> Ear (L)</span> <span>{{ ent.ear_left or "Normal" }}</span></div>
+            <div class="exam-row" style="padding:0;"><span class="exam-label"><span class="exam-num purple">5</span> Hearing</span> <span>{{ ent.audiometry or "Normal" }}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Eye Examination & Vision Screening -->
+  <div class="two-col-grid" style="grid-template-columns: 2.7fr 1.3fr;">
+    <div class="section-card">
+      <div class="section-header blue">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#0d47a1"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        Eye Examination
+      </div>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>EYE</th>
+            <th>SPH</th>
+            <th>CYL</th>
+            <th>AXIS</th>
+            <th>VISION</th>
+            <th>ADD</th>
+            <th>COLOR VISION</th>
+            <th>REMARKS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:bold; background:#f5f5f5;">Right Eye (OD)</td>
+            <td>{{ eye.right_sph or "Plano" }}</td>
+            <td>{{ eye.right_cyl or "0.00" }}</td>
+            <td>{{ eye.right_axis or "0°" }}</td>
+            <td>{{ eye.right_vision or "6/6" }}</td>
+            <td>{{ eye.right_add or "N/A" }}</td>
+            <td>{{ eye.color_vision or "Normal" }}</td>
+            <td>{{ eye.right_remarks or "Normal" }}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:bold; background:#f5f5f5;">Left Eye (OS)</td>
+            <td>{{ eye.left_sph or "Plano" }}</td>
+            <td>{{ eye.left_cyl or "0.00" }}</td>
+            <td>{{ eye.left_axis or "0°" }}</td>
+            <td>{{ eye.left_vision or "6/6" }}</td>
+            <td>{{ eye.left_add or "N/A" }}</td>
+            <td>{{ eye.color_vision or "Normal" }}</td>
+            <td>{{ eye.left_remarks or "Normal" }}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:bold; background:#f5f5f5;">Near Vision</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N6</td>
+            <td>N/A</td>
+            <td>Normal</td>
+            <td>Clear</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Vision Screening -->
+    <div class="section-card">
+      <div class="section-header blue">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#0d47a1"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
+        Vision Screening
+      </div>
+      <div style="font-size: 7.2px; padding-top: 3px;">
+        <div style="margin-bottom: 3px;">
+          <span class="cb {% if eye.screening == 'Normal' or not eye.screening %}checked{% endif %}">{% if eye.screening == 'Normal' or not eye.screening %}✓{% endif %}</span> Normal
+        </div>
+        <div style="margin-bottom: 3px;">
+          <span class="cb {% if eye.screening == 'Refractive Error' %}checked{% endif %}">{% if eye.screening == 'Refractive Error' %}✓{% endif %}</span> Refractive Error
+        </div>
+        <div>
+          <span class="cb {% if eye.screening == 'Needs Further Evaluation' %}checked{% endif %}">{% if eye.screening == 'Needs Further Evaluation' %}✓{% endif %}</span> Needs Further Evaluation
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Hearing, Vaccination, Health & Lifestyle -->
+  <div class="three-col-grid">
+    <!-- Hearing -->
+    <div class="section-card" style="border-color: #ffe082;">
+      <div class="section-header orange">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#e65100"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/></svg>
+        Hearing Screening
+      </div>
+      <div style="font-size: 7.2px;">
+        <div style="margin-bottom: 2px;">
+          <b>Right:</b>
+          <span class="cb {% if hearing.right_ear == 'Normal' or not hearing.right_ear %}checked{% endif %}">{% if hearing.right_ear == 'Normal' or not hearing.right_ear %}✓{% endif %}</span> Nor
+          <span class="cb {% if hearing.right_ear == 'Reduced' %}checked{% endif %}">{% if hearing.right_ear == 'Reduced' %}✓{% endif %}</span> Red
+          <span class="cb {% if hearing.right_ear == 'Referred' %}checked{% endif %}">{% if hearing.right_ear == 'Referred' %}✓{% endif %}</span> Ref
+        </div>
+        <div>
+          <b>Left:</b>
+          <span class="cb {% if hearing.left_ear == 'Normal' or not hearing.left_ear %}checked{% endif %}">{% if hearing.left_ear == 'Normal' or not hearing.left_ear %}✓{% endif %}</span> Nor
+          <span class="cb {% if hearing.left_ear == 'Reduced' %}checked{% endif %}">{% if hearing.left_ear == 'Reduced' %}✓{% endif %}</span> Red
+          <span class="cb {% if hearing.left_ear == 'Referred' %}checked{% endif %}">{% if hearing.left_ear == 'Referred' %}✓{% endif %}</span> Ref
+        </div>
+      </div>
+    </div>
+
+    <!-- Vaccination -->
+    <div class="section-card purple-theme">
+      <div class="section-header purple">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#6a1b9a"><path d="M19.07 4.93l-1.41-1.41C17.27 3.13 16.76 3 16.24 3c-.51 0-1.02.2-1.41.59L3.59 14.83c-.78.78-.78 2.05 0 2.83l1.41 1.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59L19.07 7.76c.78-.78.78-2.05 0-2.83z"/></svg>
+        Vaccination Status
+      </div>
+      <div style="font-size: 7.2px;">
+        <div style="margin-bottom: 2px;">
+          <span class="cb {% if vaccination.status == 'Up to Date' or not vaccination.status %}checked{% endif %}">{% if vaccination.status == 'Up to Date' or not vaccination.status %}✓{% endif %}</span> Up to Date
+        </div>
+        <div style="margin-bottom: 2px;">
+          <span class="cb {% if vaccination.status == 'Partially Completed' %}checked{% endif %}">{% if vaccination.status == 'Partially Completed' %}✓{% endif %}</span> Partially Completed
+        </div>
+        <div>
+          <span class="cb {% if vaccination.status == 'Not Up to Date' %}checked{% endif %}">{% if vaccination.status == 'Not Up to Date' %}✓{% endif %}</span> Not Up to Date
+        </div>
+      </div>
+    </div>
+
+    <!-- Lifestyle -->
+    <div class="section-card green-theme">
+      <div class="section-header green">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#2e7d32"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Health & Lifestyle
+      </div>
+      <div style="font-size: 7.2px;">
+        <div style="margin-bottom: 1.5px;">
+          <b>Diet:</b> 
+          <span class="cb {% if lifestyle.diet_pattern == 'Good' or not lifestyle.diet_pattern %}checked{% endif %}">{% if lifestyle.diet_pattern == 'Good' or not lifestyle.diet_pattern %}✓{% endif %}</span> Good
+          <span class="cb {% if lifestyle.diet_pattern == 'Average' %}checked{% endif %}">{% if lifestyle.diet_pattern == 'Average' %}✓{% endif %}</span> Avg
+          <span class="cb {% if lifestyle.diet_pattern == 'Poor' %}checked{% endif %}">{% if lifestyle.diet_pattern == 'Poor' %}✓{% endif %}</span> Poor
+        </div>
+        <div style="margin-bottom: 1.5px;">
+          <b>Activity:</b>
+          <span class="cb {% if lifestyle.physical_activity == 'Active' or not lifestyle.physical_activity %}checked{% endif %}">{% if lifestyle.physical_activity == 'Active' or not lifestyle.physical_activity %}✓{% endif %}</span> Active
+          <span class="cb {% if lifestyle.physical_activity == 'Sedentary' %}checked{% endif %}">{% if lifestyle.physical_activity == 'Sedentary' %}✓{% endif %}</span> Sedentary
+        </div>
+        <div>
+          <b>Sleep:</b>
+          <span class="cb {% if lifestyle.sleep_pattern == 'Good' or not lifestyle.sleep_pattern %}checked{% endif %}">{% if lifestyle.sleep_pattern == 'Good' or not lifestyle.sleep_pattern %}✓{% endif %}</span> Good
+          <span class="cb {% if lifestyle.sleep_pattern == 'Average' %}checked{% endif %}">{% if lifestyle.sleep_pattern == 'Average' %}✓{% endif %}</span> Avg
+          <span class="cb {% if lifestyle.sleep_pattern == 'Poor' %}checked{% endif %}">{% if lifestyle.sleep_pattern == 'Poor' %}✓{% endif %}</span> Poor
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Dietitian Recommendation / Nutrition Advice (Mapped from Phase 3) -->
+  <div class="section-card orange-theme">
+    <div class="section-header orange">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="#e65100"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      Dietitian Recommendation / Nutrition Advice
+    </div>
+    <div class="diet-grid">
+      <!-- Left Checkboxes -->
+      <div class="diet-cbs">
+        <div><span class="cb {% if diet_flags.high_protein %}checked{% endif %}">{% if diet_flags.high_protein %}✓{% endif %}</span> High Protein Diet Recommended</div>
+        <div><span class="cb {% if diet_flags.iron_rich %}checked{% endif %}">{% if diet_flags.iron_rich %}✓{% endif %}</span> Iron Rich Diet Recommended</div>
+        <div><span class="cb {% if diet_flags.calcium_rich %}checked{% endif %}">{% if diet_flags.calcium_rich %}✓{% endif %}</span> Calcium Rich Diet Recommended</div>
+        <div><span class="cb {% if diet_flags.weight_gain %}checked{% endif %}">{% if diet_flags.weight_gain %}✓{% endif %}</span> Weight Gain Diet Plan</div>
+        <div><span class="cb {% if diet_flags.weight_management %}checked{% endif %}">{% if diet_flags.weight_management %}✓{% endif %}</span> Weight Management Diet Plan</div>
+        <div><span class="cb {% if diet_flags.others %}checked{% endif %}">{% if diet_flags.others %}✓{% endif %}</span> Others (Specify): {{ diet_flags.others_text or "Balanced Maintenance Diet" }}</div>
+      </div>
+
+      <!-- Right Advice Text -->
+      <div class="dotted-area">
+        <div style="font-weight: 700; color: #e65100; margin-bottom: 2px;">Dietitian's Advice (Based on Test Results):</div>
+        <div class="dotted-line"><b>Z-Scores:</b> HAZ: {{ zscores.height_for_age_z }}, WAZ: {{ zscores.weight_for_age_z or "N/A" }}, BAZ: {{ zscores.bmi_for_age_z }}</div>
+        <div class="dotted-line">{{ dietitian_advice_line1 or "Ensure daily intake of fresh fruits, green vegetables, pulses, and boiled milk." }}</div>
+        <div class="dotted-line">{{ dietitian_advice_line2 or "Focus on balanced regional Indian thali with adequate hydration and outdoor physical play." }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Pathology & Other Recommendations -->
+  <div class="two-col-grid" style="grid-template-columns: 1fr 1.4fr;">
+    <!-- Pathology -->
+    <div class="section-card" style="border-color: #80deea;">
+      <div class="section-header cyan">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#00838f"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        Pathology Test Report
+      </div>
+      <div style="font-size: 7.2px;">
+        <div class="exam-row"><span><b>Blood Group:</b></span> <span class="val-box">{{ pathology.blood_group or "N/A" }}</span></div>
+        <div class="exam-row"><span><b>Hemoglobin (Hb):</b></span> <span class="val-box">{{ pathology.hemoglobin or "12.5" }} g/dL</span></div>
+        <div class="exam-row"><span><b>Cholesterol:</b></span> <span class="val-box">{{ pathology.cholesterol or "140" }} mg/dL</span></div>
+      </div>
+    </div>
+
+    <!-- Recommendations / Referral -->
+    <div class="section-card orange-theme">
+      <div class="section-header orange">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#e65100"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Other Recommendations / Referral
+      </div>
+      <div style="font-size: 7.2px;">
+        <div class="dotted-line">{{ doctor_remarks or "No active specialist referral required at this stage." }}</div>
+        <div class="dotted-line">Schedule next routine screening in 6 months during annual school health camp.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Overall Health Status & Signatures -->
+  <div class="two-col-grid" style="grid-template-columns: 1.15fr 1.25fr; margin-bottom: 2px;">
+    <!-- Overall Status -->
+    <div class="section-card">
+      <div class="section-header blue">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="#0d47a1"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        Overall Health Status
+      </div>
+      <div style="font-size: 7.2px;">
+        <div style="margin-bottom: 2px;"><span class="cb {% if status_flags.normal %}checked{% endif %}">{% if status_flags.normal %}✓{% endif %}</span> Normal / Healthy</div>
+        <div style="margin-bottom: 2px;"><span class="cb {% if status_flags.minor %}checked{% endif %}">{% if status_flags.minor %}✓{% endif %}</span> Minor Issues (Advice Given)</div>
+        <div style="margin-bottom: 2px;"><span class="cb {% if status_flags.needs_followup %}checked{% endif %}">{% if status_flags.needs_followup %}✓{% endif %}</span> Needs Medical Follow-up</div>
+        <div style="margin-bottom: 2px;"><span class="cb {% if status_flags.specialist %}checked{% endif %}">{% if status_flags.specialist %}✓{% endif %}</span> Refer to Specialist</div>
+        <div style="font-size: 7px; color: #555; margin-top: 2px;"><b>Date of Exam:</b> {{ recorded_date or "15/08/2026" }}</div>
+      </div>
+    </div>
+
+    <!-- Doctor Remark -->
+    <div class="section-card">
+      <div class="section-header blue">Remark / Opinion</div>
+      <div style="font-size: 7.2px;">
+        <div class="dotted-line">{{ clinical_opinion_line1 or "Overall developmental milestones and general health evaluated." }}</div>
+        <div class="dotted-line">{{ clinical_opinion_line2 or "Maintain nutritional compliance and regular physical exercise." }}</div>
+        <div class="dotted-line">Consult camp physician if any symptoms persist.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signatures and QR Code Row -->
+  <div class="sign-grid">
+    <div class="sign-box">Doctor's Signature</div>
+    <div class="sign-box"><b style="color:#000;">Dr. S. K. Verma, MBBS</b>Doctor's Name</div>
+    <div class="sign-box"><b style="color:#000;">SHWF Mobile Unit</b>Clinic / Center Seal</div>
+    <div class="qr-box">
+      <!-- QR Vector SVG -->
+      <svg viewBox="0 0 100 100">
+        <rect x="10" y="10" width="30" height="30" fill="none" stroke="#0d47a1" stroke-width="6"/>
+        <rect x="20" y="20" width="10" height="10" fill="#0d47a1"/>
+        <rect x="60" y="10" width="30" height="30" fill="none" stroke="#0d47a1" stroke-width="6"/>
+        <rect x="70" y="20" width="10" height="10" fill="#0d47a1"/>
+        <rect x="10" y="60" width="30" height="30" fill="none" stroke="#0d47a1" stroke-width="6"/>
+        <rect x="20" y="70" width="10" height="10" fill="#0d47a1"/>
+        <rect x="55" y="55" width="12" height="12" fill="#0d47a1"/>
+        <rect x="75" y="75" width="15" height="15" fill="#0d47a1"/>
+        <rect x="55" y="75" width="10" height="15" fill="#0d47a1"/>
+        <rect x="75" y="55" width="15" height="10" fill="#0d47a1"/>
+      </svg>
+      Scan for Digital Report
+    </div>
+  </div>
+
+  <!-- Bottom Footer -->
+  <div class="footer-bar">
+    <div>🌐 www.smarthealthyindia.com</div>
+    <div>✉ smarthealthyindia@gmail.com</div>
+    <div>📞 9424761140, 9713673141</div>
+  </div>
+  <div class="footer-tagline">🌿 Healthy Students, Strong Nation 🌿</div>
+
+</div>
+
+</body>
+</html>
