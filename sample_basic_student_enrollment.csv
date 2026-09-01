@@ -1,0 +1,6 @@
+student_id,full_name,date_of_birth,gender,parent_name,parent_phone,parent_email,school_code
+STD-2026-201,Aditya Saxena,2014-05-12,M,Ramesh Saxena,+919876543210,ramesh.saxena@example.com,NARS01
+STD-2026-202,Diya Sharma,2015-09-18,F,Sunil Sharma,+919876543211,sunil.sharma@example.com,NARS01
+STD-2026-203,Manish Joshi,2013-03-25,M,Gopal Joshi,+919876543212,gopal.joshi@example.com,NARS02
+STD-2026-204,Tanvi Deshmukh,2016-07-30,F,Sachin Deshmukh,+919876543213,sachin@example.com,NARS02
+STD-2026-205,Arjun Nair,2012-11-14,M,Pradeep Nair,+919876543214,pradeep.nair@example.com,NARS03
