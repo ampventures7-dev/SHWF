@@ -278,8 +278,12 @@ export const translations = {
       p3Desc: "Tailored dietary advice utilizing affordable, culturally familiar Indian staples (millets, pulses, seasonal greens) for optimal bioavailability.",
       p4Title: "4. Direct Parent Empowerment",
       p4Desc: "Zero-barrier digital access for parents via phone OTP and instant PDF report cards to make healthcare transparent and actionable.",
+      learnMore: "Learn more about our methodology",
+      methodologyTitle: "Clinical & Scientific Methodology",
+      methodologySubtitle: "Evidence-based pediatric standards implemented across all school health drives.",
     },
     gallery: {
+
       badge: "On-Ground Visual Impact",
       title: "School Health Camp Gallery",
       subtitle: "Glimpses of pediatric screenings, dental & vision checkups, and nutritional card distributions across partnering schools in India.",
@@ -588,8 +592,12 @@ export const translations = {
       p3Desc: "बच्चों के इष्टतम शारीरिक विकास के लिए सुलभ, पारंपरिक भारतीय खाद्य पदार्थों (मोटे अनाज, दालें, हरी सब्जियां) पर आधारित आहार सलाह।",
       p4Title: "4. अभिभावक सशक्तिकरण",
       p4Desc: "ओटीपी और तत्काल पीडीएफ रिपोर्ट कार्ड के माध्यम से अभिभावकों को पारदर्शी, डिजिटल और कार्रवाई योग्य स्वास्थ्य जानकारी।",
+      learnMore: "हमारी कार्यप्रणाली के बारे में जानें",
+      methodologyTitle: "नैदानिक एवं वैज्ञानिक कार्यप्रणाली",
+      methodologySubtitle: "सभी विद्यालय स्वास्थ्य शिविरों में लागू किए गए साक्ष्य-आधारित बाल स्वास्थ्य मानक।",
     },
     gallery: {
+
       badge: "प्रत्यक्ष सेवा एवं प्रभाव",
       title: "विद्यालय स्वास्थ्य शिविर फोटो गैलरी",
       subtitle: "भारत भर के सहयोगी विद्यालयों में आयोजित बाल स्वास्थ्य परीक्षण, नेत्र व दंत जांच और पोषण कार्ड वितरण की झलकियां।",
