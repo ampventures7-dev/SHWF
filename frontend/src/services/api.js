@@ -243,10 +243,97 @@ export const API = {
           height_velocity_rating: "Optimal Linear Growth (+3.5 cm / 2 mo)",
           weight_velocity_rating: "Healthy Weight Gain (+2.5 kg / 2 mo)",
           growth_assessment_summary: "Child's physical growth development over 2 months shows a +3.5 cm height change and +2.5 kg weight progression. Growth parameters align with WHO healthy child velocity thresholds."
+        },
+        immunizations: [
+          {
+            vaccine_name: "Tdap / Td Adolescent Booster",
+            target_age: "10-12 Years",
+            dose: "Booster Dose",
+            status: "Recommended",
+            description: "Tetanus, Diphtheria, and acellular Pertussis booster recommended at 10-12 years of age for sustained school protection.",
+            description_hi: "10-12 वर्ष की आयु में टिटनेस, डिप्थीरिया और पर्टुसिस से निरंतर सुरक्षा हेतु टीबी / टीडीएपी बूस्टर आवश्यक है।"
+          },
+          {
+            vaccine_name: "MMR (Measles, Mumps, Rubella)",
+            target_age: "4-6 Years",
+            dose: "Dose 2",
+            status: "Completed",
+            description: "Second booster dose for long-term immunity against Measles, Mumps, and Rubella infections.",
+            description_hi: "खसरा, गलसुआ और रूबेला के विरुद्ध दीर्घकालिक रोग प्रतिरोधक क्षमता हेतु दूसरा टीका।"
+          },
+          {
+            vaccine_name: "Typhoid Conjugate Vaccine (TCV)",
+            target_age: "6-18 Years",
+            dose: "Single Dose",
+            status: "Recommended",
+            description: "High efficacy long-lasting conjugate vaccine preventing food and water-borne enteric typhoid fever.",
+            description_hi: "दूषित जल और भोजन से होने वाले टाइफाइड बुखार से बचाव के लिए अत्यधिक प्रभावी टीका।"
+          },
+          {
+            vaccine_name: "Annual Influenza (Flu)",
+            target_age: "All School Ages",
+            dose: "Annual",
+            status: "Recommended",
+            description: "Seasonal influenza quadrivalent vaccine given annually before monsoon/winter to prevent school absenteeism.",
+            description_hi: "मानसून और सर्दियों से पूर्व मौसमी फ्लू व श्वसन संक्रमण से बचाव हेतु वार्षिक टीका।"
+          }
+        ],
+        preventive_recalls: [
+          {
+            checkup_type: "Pediatric Dental Cleaning & Caries Screening",
+            interval_months: 6,
+            next_due_date: "15/02/2027",
+            status: "Scheduled",
+            advice: "6-month routine dental prophylaxis to detect early pit-and-fissure caries and maintain healthy enamel.",
+            advice_hi: "दांतों में सड़न व कैविटी से बचाव हेतु प्रत्येक 6 माह में नियमित दंत परीक्षण।"
+          },
+          {
+            checkup_type: "Refraction & Visual Acuity Test",
+            interval_months: 6,
+            next_due_date: "15/02/2027",
+            status: "Scheduled",
+            advice: "Periodic Snellen chart evaluation to catch early school-age myopia, astigmatism, or screen strain.",
+            advice_hi: "स्कूल में ब्लैकबोर्ड देखने की क्षमता व निकट दृष्टि दोष (मायोपिया) की 6-मासिक नेत्र जांच।"
+          },
+          {
+            checkup_type: "Anthropometric Growth Velocity Audit",
+            interval_months: 6,
+            next_due_date: "15/02/2027",
+            status: "Scheduled",
+            advice: "Re-evaluation of Height (cm), Weight (kg), and BMI velocity against WHO median velocity percentiles.",
+            advice_hi: "डब्ल्यूएचओ विकास वक्र के अनुसार लंबाई और वजन में 6 माह की प्रगति का पुनर्मूल्यांकन।"
+          }
+        ],
+        growth_forecast: {
+          current_height_cm: 138.5,
+          current_weight_kg: 31.0,
+          linear_velocity_gauge: "Target Velocity: +0.6 cm/mo",
+          catchup_needed: false,
+          six_month_forecast: {
+            interval_months: 6,
+            projected_height_cm: 141.2,
+            projected_weight_kg: 32.6,
+            projected_bmi: 16.35,
+            projected_haz: 0.18,
+            interpretation: "Expected height growth of ~2.7 cm aligning with WHO median linear velocity.",
+            interpretation_hi: "डब्ल्यूएचओ मानक के अनुसार 6 महीनों में लगभग +2.7 सेमी की सामान्य वृद्धि अपेक्षित है।"
+          },
+          twelve_month_forecast: {
+            interval_months: 12,
+            projected_height_cm: 143.9,
+            projected_weight_kg: 34.2,
+            projected_bmi: 16.51,
+            projected_haz: 0.20,
+            interpretation: "Projected annual gain of ~5.4 cm height with sustained balanced nutritional intake.",
+            interpretation_hi: "संतुलित आहार व खेलकूद के साथ 12 महीनों में ~5.4 सेमी लंबाई व +3.2 किग्रा वजन की स्वस्थ प्रगति।"
+          },
+          nutritional_milestone_guidance: "Incorporate dal, paneer, eggs/sprouts, seasonal fruits, and warm milk daily to achieve optimal height velocity.",
+          nutritional_milestone_guidance_hi: "विकास के लिए दैनिक भोजन में दाल, पनीर, अंकुरित अनाज, मौसमी फल और दूध शामिल करें।"
         }
       };
     }
   },
+
 
   async adminLogin(username, password) {
     try {
