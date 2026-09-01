@@ -4,7 +4,9 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DonationSection from './components/DonationSection';
 import Pillars from './components/Pillars';
+import Gallery from './components/Gallery';
 import StudentPortal from './components/StudentPortal';
+
 import OtpModal from './components/OtpModal';
 import UserLoginModal from './components/UserLoginModal';
 import AdminLoginModal from './components/AdminLoginModal';
@@ -162,11 +164,15 @@ export default function App() {
       {/* 4. Core Transformation Pillars (Reliance Foundation Style) */}
       <Pillars />
 
-      {/* 5. Prominent Donation & Bank Details Section (Second Last Section) */}
+      {/* 5. School Health Camp Photo Gallery */}
+      <Gallery />
+
+      {/* 6. Prominent Donation & Bank Details Section (Second Last Section) */}
       <DonationSection onToast={addToast} />
 
-      {/* 6. Official Noble NGO Footer (Strictly NO EMAIL) */}
+      {/* 7. Official Noble NGO Footer (Strictly NO EMAIL) */}
       <Footer />
+
 
 
       {/* 1. Admin Password Sign-In Modal (Protected Barrier) */}

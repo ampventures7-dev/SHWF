@@ -17,9 +17,11 @@ export default function Navbar({
     { name: t('nav.portal', 'Student Portal'), href: '#portal' },
     { name: t('nav.calculator', 'Growth Calculator'), href: '#calculator' },
     { name: t('nav.pillars', 'Pillars & Impact'), href: '#pillars' },
+    { name: t('nav.gallery', 'Camp Gallery'), href: '#gallery' },
     { name: t('nav.donate', 'Donate & Bank Details'), href: '#donate' },
     { name: t('nav.about', 'About Us'), href: '#about' },
   ];
+
 
 
   return (
