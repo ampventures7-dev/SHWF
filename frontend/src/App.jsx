@@ -107,13 +107,8 @@ export default function App() {
       {/* Toast Notification Container */}
       <Toast toasts={toasts} onDismiss={removeToast} />
 
-      {/* Top Banner Notice with Fast Sign-In & Admin Action */}
-      <TopBar
-        onOpenAdmin={handleOpenAdmin}
-        onOpenUserLogin={handleOpenUserLogin}
-        isAdminLoggedIn={!!adminToken}
-        isUserLoggedIn={!!authToken}
-      />
+      {/* Top Banner Notice with Official Registration & Helpline */}
+      <TopBar />
 
       {/* Main Sticky Navbar */}
       <Navbar
