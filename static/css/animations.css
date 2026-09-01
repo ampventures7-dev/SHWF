@@ -1,0 +1,98 @@
+/* ============================================================================
+   SMART HEALTH WELFARE FOUNDATION - KEYFRAME ANIMATIONS & EFFECTS
+   ============================================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(243, 112, 33, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(243, 112, 33, 0);
+  }
+}
+
+@keyframes pulseGlowGreen {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 128, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(0, 128, 55, 0);
+  }
+}
+
+@keyframes ecgPulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Spinner element */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner.navy {
+  border-color: rgba(0, 40, 104, 0.2);
+  border-top-color: var(--shwf-navy);
+}
+
+.pulse-button {
+  animation: pulseGlow 2.5s infinite;
+}
+
+.pulse-button-green {
+  animation: pulseGlowGreen 2.5s infinite;
+}
+
+.pulse-logo {
+  animation: ecgPulse 3s ease-in-out infinite;
+}

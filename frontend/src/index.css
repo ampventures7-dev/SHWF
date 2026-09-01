@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(243, 112, 33, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(243, 112, 33, 0);
+  }
+}
+
+@keyframes pulseGlowGreen {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 128, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(0, 128, 55, 0);
+  }
+}
+
+.pulse-button {
+  animation: pulseGlow 2.5s infinite;
+}
+
+.pulse-button-green {
+  animation: pulseGlowGreen 2.5s infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

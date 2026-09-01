@@ -52,19 +52,20 @@ otp_requests (id, student_id, contact, otp_code [bcrypt hash], expires_at, verif
 - A Supabase Project (Cloud or Local)
 - MSG91 Account (for live SMS dispatch; local stub mode is automatically enabled if credentials are not set)
 
-### 2. Install Dependencies
+### 2. Navigate to Backend & Install Dependencies
 ```bash
+cd backend
 pip install -r requirements.txt
 ```
 
 ### 3. Apply Supabase Database Schema
 1. Open your [Supabase Project Dashboard](https://app.supabase.com).
 2. Navigate to the **SQL Editor**.
-3. Copy and run the contents of [`sql/schema.sql`](./sql/schema.sql).
-4. *(Optional for testing)* Copy and run [`sql/seed.sql`](./sql/seed.sql) to populate sample States, Districts, Schools, and Students (`STD-2026-001`, `STD-2026-002`, `STD-2026-003`).
+3. Copy and run the contents of [`backend/sql/schema.sql`](./backend/sql/schema.sql).
+4. *(Optional for testing)* Copy and run [`backend/sql/seed.sql`](./backend/sql/seed.sql) to populate sample States, Districts, Schools, and Students (`STD-2026-001`, `STD-2026-002`, `STD-2026-003`).
 
 ### 4. Configure Environment Variables
-Copy `.env.example` to `.env` and configure your credentials:
+Inside the `backend/` directory, copy `.env.example` to `.env` and configure your credentials:
 
 ```bash
 cp .env.example .env
@@ -103,8 +104,9 @@ MSG91_TEMPLATE_ID=your_msg91_dlt_template_id_here
 
 ## 🏃 Running the Application Locally
 
-Start the FastAPI development server:
+Navigate into the `backend/` folder and start the FastAPI development server:
 ```bash
+cd backend
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
 ```
 
@@ -213,9 +215,10 @@ async def get_records(claims: VerifiedStudentClaims = Depends(get_verified_stude
 
 ## 🧪 Running Automated Tests
 
-Run the complete test suite (32 unit & integration tests across all phases) with `pytest`:
+Run the complete test suite (65 unit & integration tests across all phases) with `pytest` inside the `backend/` directory:
 
 ```bash
+cd backend
 python -m pytest tests/ -v
 ```
 

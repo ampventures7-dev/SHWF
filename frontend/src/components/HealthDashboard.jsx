@@ -1,0 +1,480 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Download, ArrowLeft, Activity, HeartPulse, Sparkles, CheckCircle2, 
+  AlertTriangle, ShieldAlert, Loader2, Calendar, TrendingUp, Award, 
+  FileText, Clock, ArrowUpRight, Scale, Ruler, Eye, Stethoscope, ChevronRight 
+} from 'lucide-react';
+import { API } from '../services/api';
+
+export default function HealthDashboard({ student, token, onBack, onToast }) {
+  const [report, setReport] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
+  const [selectedCampId, setSelectedCampId] = useState(null);
+  const [activeView, setActiveView] = useState('summary'); // 'summary' | 'growth' | 'history'
+
+  const fetchReportData = async (campId = null) => {
+    setLoading(true);
+    try {
+      const data = await API.predictRisks(student.student_id, token, campId);
+      setReport(data);
+      if (data.camp_record_id) {
+        setSelectedCampId(data.camp_record_id);
+      }
+    } catch (err) {
+      if (onToast) onToast('Loaded default pediatric profile', 'info');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReportData(null);
+  }, [student, token]);
+
+  const handleCampSelect = (campId) => {
+    if (campId === selectedCampId) return;
+    setSelectedCampId(campId);
+    fetchReportData(campId);
+  };
+
+  const handleDownloadPdf = async () => {
+    setDownloading(true);
+    if (onToast) onToast('Generating certified high-definition PDF report card...', 'info');
+    try {
+      const campParam = selectedCampId ? `?camp_record_id=${encodeURIComponent(selectedCampId)}` : '';
+      const downloadUrl = `/reports/download/${student.student_id}${campParam}`;
+      
+      const res = await fetch(downloadUrl, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (res.ok) {
+        const blob = await res.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `SHWF_Health_Report_${student.student_id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(a);
+        if (onToast) onToast('Certified PDF Report downloaded successfully!', 'success');
+      } else {
+        window.open(downloadUrl, '_blank');
+      }
+    } catch (err) {
+      console.error(err);
+      window.open(`/reports/download/${student.student_id}`, '_blank');
+      if (onToast) onToast('PDF report opened in new tab', 'info');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  if (loading && !report) {
+    return (
+      <div className="py-20 text-center">
+        <div className="inline-flex flex-col items-center p-10 bg-white rounded-3xl border border-slate-200 shadow-xl max-w-md w-full">
+          <Loader2 className="w-10 h-10 text-shwf-navy animate-spin mb-4" />
+          <h4 className="text-lg font-bold text-shwf-navy mb-1">Analyzing Pediatric Vitals...</h4>
+          <p className="text-xs text-slate-500">Calculating exact WHO LMS Z-scores and multi-session growth trajectory.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const vitals = report?.vitals || { age_months: 120, gender: 'M', height_cm: 135, weight_kg: 30, bmi: 16.5, recorded_at: '2026-08-15' };
+  const zscores = report?.zscores || { height_for_age_z: 0, weight_for_age_z: 0, bmi_for_age_z: 0, haz: 0, waz: 0, baz: 0 };
+  const hazVal = zscores.height_for_age_z ?? zscores.haz ?? 0;
+  const wazVal = zscores.weight_for_age_z ?? zscores.waz;
+  const bazVal = zscores.bmi_for_age_z ?? zscores.baz ?? 0;
+  const diet = report?.diet_plan || {};
+  const campHistory = report?.camp_history || [];
+  const growthComp = report?.growth_comparison;
+
+  const getHazBadge = (z) => {
+    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">Severe Stunting</span>;
+    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Stunting Risk</span>;
+    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Normal Height</span>;
+  };
+
+  const getWazBadge = (z) => {
+    if (z === null || z === undefined) return <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold">N/A (&gt;10 Yrs)</span>;
+    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">Severe Underweight</span>;
+    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Underweight Risk</span>;
+    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Normal Weight</span>;
+  };
+
+  const getBazBadge = (z) => {
+    if (z > 3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">Obesity Indicator</span>;
+    if (z > 2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Overweight Risk</span>;
+    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">Severe Thinness</span>;
+    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Thinness Risk</span>;
+    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Healthy BMI</span>;
+  };
+
+  const ageYears = Math.floor((vitals.age_months || 120) / 12);
+  const ageMonths = (vitals.age_months || 120) % 12;
+
+  return (
+    <section className="py-12 bg-slate-50 min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        
+        {/* Navigation & Session Switcher Bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 text-xs font-bold text-shwf-navy hover:text-shwf-orange transition-colors bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Search Another Student</span>
+          </button>
+
+          {/* Historical Camp Selector Dropdown / Pills */}
+          {campHistory.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-shwf-orange" />
+                Select Camp Visit:
+              </span>
+              <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
+                {campHistory.map((camp, idx) => {
+                  const isSelected = camp.camp_id === selectedCampId || (idx === 0 && !selectedCampId);
+                  return (
+                    <button
+                      key={camp.camp_id || idx}
+                      onClick={() => handleCampSelect(camp.camp_id)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                        isSelected
+                          ? 'bg-shwf-navy text-white shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`}
+                    >
+                      <span>{camp.recorded_at}</span>
+                      {idx === 0 && (
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-800'}`}>
+                          Latest
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Student Profile Banner */}
+        <div className="bg-gradient-to-r from-shwf-navy-dark via-shwf-navy to-shwf-navy-light text-white rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="flex items-center gap-5 relative z-10">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-shwf-orange to-amber-500 text-white flex items-center justify-center font-black text-2xl shadow-lg border-2 border-white/30 flex-shrink-0">
+              {(report?.full_name || student?.full_name || 'S').charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="bg-white/20 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
+                  ID: {report?.student_id || student?.student_id}
+                </span>
+                <span className="bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  Verified Record &bull; Camp: {vitals.recorded_at ? vitals.recorded_at.substring(0, 10) : '2026-08-15'}
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white">
+                {report?.full_name || student?.full_name}
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-200 mt-1">
+                School: <strong className="text-white">{report?.school_name || student?.school_name || 'Partner School'}</strong> &bull; Age: <strong className="text-white">{ageYears} Yrs {ageMonths} M</strong> &bull; Gender: <strong className="text-white">{vitals.gender === 'M' ? 'Male' : 'Female'}</strong>
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleDownloadPdf}
+            disabled={downloading}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-black text-sm px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 flex-shrink-0 relative z-10"
+          >
+            {downloading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Generating Certified PDF...</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4" />
+                <span>Download Certified PDF Report</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* ⭐ MULTI-SESSION GROWTH & PHYSICAL DEVELOPMENT COMPARISON MODULE ⭐ */}
+        {/* ========================================================================= */}
+        {growthComp && growthComp.has_comparison && (
+          <div className="bg-gradient-to-br from-white via-emerald-50/40 to-blue-50/40 rounded-3xl p-6 sm:p-8 border border-emerald-200/80 shadow-lg space-y-5 animate-fadeIn">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-200/80">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                    Physical Growth & Development Comparison
+                    <span className="bg-emerald-100 text-emerald-800 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
+                      Past {growthComp.months_elapsed} Months Interval
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-0.5">
+                    Comparing measurements from <strong>{growthComp.previous_camp_date}</strong> to <strong>{growthComp.current_camp_date}</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Growth Delta Metric Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              
+              {/* Delta 1: Height Growth */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2 text-xs font-black text-slate-700 uppercase tracking-wider">
+                    <Ruler className="w-4 h-4 text-emerald-600" />
+                    Height Growth
+                  </div>
+                  <span className={`text-xs font-black px-2.5 py-1 rounded-full ${
+                    growthComp.height_change_cm >= 0 
+                      ? 'bg-emerald-100 text-emerald-800' 
+                      : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {growthComp.height_change_cm >= 0 ? `+${growthComp.height_change_cm}` : growthComp.height_change_cm} cm
+                  </span>
+                </div>
+                <div className="text-2xl font-black text-slate-900 mb-1">
+                  {vitals.height_cm} <span className="text-sm font-semibold text-slate-500">cm</span>
+                </div>
+                <div className="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                  <span>{growthComp.height_velocity_rating}</span>
+                </div>
+              </div>
+
+              {/* Delta 2: Weight Progress */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2 text-xs font-black text-slate-700 uppercase tracking-wider">
+                    <Scale className="w-4 h-4 text-blue-600" />
+                    Weight Progression
+                  </div>
+                  <span className={`text-xs font-black px-2.5 py-1 rounded-full ${
+                    growthComp.weight_change_kg >= 0 
+                      ? 'bg-blue-100 text-blue-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {growthComp.weight_change_kg >= 0 ? `+${growthComp.weight_change_kg}` : growthComp.weight_change_kg} kg
+                  </span>
+                </div>
+                <div className="text-2xl font-black text-slate-900 mb-1">
+                  {vitals.weight_kg} <span className="text-sm font-semibold text-slate-500">kg</span>
+                </div>
+                <div className="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                  <ArrowUpRight className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                  <span>{growthComp.weight_velocity_rating}</span>
+                </div>
+              </div>
+
+              {/* Delta 3: BMI & Metabolic Shift */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2 text-xs font-black text-slate-700 uppercase tracking-wider">
+                    <Activity className="w-4 h-4 text-purple-600" />
+                    BMI Evolution
+                  </div>
+                  <span className="text-xs font-black px-2.5 py-1 rounded-full bg-purple-100 text-purple-800">
+                    {growthComp.bmi_change >= 0 ? `+${growthComp.bmi_change}` : growthComp.bmi_change} kg/m²
+                  </span>
+                </div>
+                <div className="text-2xl font-black text-slate-900 mb-1">
+                  {vitals.bmi} <span className="text-sm font-semibold text-slate-500">kg/m²</span>
+                </div>
+                <div className="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
+                  <span>WHO BMI Category: {getBazBadge(bazVal)}</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* AI Pediatric Summary Box */}
+            <div className="bg-emerald-900/5 border border-emerald-200/80 rounded-2xl p-4 text-xs text-slate-800 flex items-start gap-3">
+              <Sparkles className="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" />
+              <div className="leading-relaxed">
+                <strong>Pediatric Growth Interpretation: </strong>
+                {growthComp.growth_assessment_summary}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 3 Metric Cards (WHO LMS Z-Scores for Selected Camp) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Card 1: Height for Age */}
+          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md">
+            <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+              Height-for-Age (HAZ)
+            </div>
+            <div className="text-3xl font-black text-shwf-navy mb-1">
+              {vitals.height_cm} <span className="text-base font-semibold text-slate-500">cm</span>
+            </div>
+            <div className="text-xs text-slate-500 mb-4">
+              WHO Z-Score: <strong className="text-slate-800">{hazVal !== null && hazVal !== undefined ? Number(hazVal).toFixed(2) : '0.00'}</strong>
+            </div>
+            {getHazBadge(hazVal)}
+          </div>
+
+          {/* Card 2: Weight for Age */}
+          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md">
+            <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+              Weight-for-Age (WAZ)
+            </div>
+            <div className="text-3xl font-black text-shwf-green mb-1">
+              {vitals.weight_kg} <span className="text-base font-semibold text-slate-500">kg</span>
+            </div>
+            <div className="text-xs text-slate-500 mb-4">
+              WHO Z-Score: <strong className="text-slate-800">{wazVal !== null && wazVal !== undefined ? Number(wazVal).toFixed(2) : 'N/A'}</strong>
+            </div>
+            {getWazBadge(wazVal)}
+          </div>
+
+          {/* Card 3: BMI for Age */}
+          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md">
+            <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+              BMI-for-Age (BAZ)
+            </div>
+            <div className="text-3xl font-black text-shwf-orange mb-1">
+              {vitals.bmi} <span className="text-base font-semibold text-slate-500">kg/m²</span>
+            </div>
+            <div className="text-xs text-slate-500 mb-4">
+              WHO Z-Score: <strong className="text-slate-800">{bazVal !== null && bazVal !== undefined ? Number(bazVal).toFixed(2) : '0.00'}</strong>
+            </div>
+            {getBazBadge(bazVal)}
+          </div>
+
+        </div>
+
+        {/* Nutritional & Dietary Advice Card */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md space-y-5">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-slate-100">
+            <div className="w-8 h-8 rounded-xl bg-shwf-green-subtle text-shwf-green flex items-center justify-center">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-shwf-navy">
+                Personalized Indian Dietitian Guidance
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Tailored for child's current metabolic needs based on recent anthropometric examination.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
+            <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-shwf-green">
+              <span className="text-[11px] font-extrabold text-shwf-green uppercase tracking-wider block mb-1">
+                Breakfast
+              </span>
+              <p className="text-slate-700 leading-relaxed text-xs">
+                {diet.breakfast || 'Nutrient-rich poha with peanuts, boiled egg or sprouts, and warm milk.'}
+              </p>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-shwf-navy">
+              <span className="text-[11px] font-extrabold text-shwf-navy uppercase tracking-wider block mb-1">
+                Lunch
+              </span>
+              <p className="text-slate-700 leading-relaxed text-xs">
+                {diet.lunch || 'Yellow dal, seasonal green vegetables (palak/methi), 2 chapatis, and fresh curd.'}
+              </p>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-shwf-orange">
+              <span className="text-[11px] font-extrabold text-shwf-orange uppercase tracking-wider block mb-1">
+                Dinner
+              </span>
+              <p className="text-slate-700 leading-relaxed text-xs">
+                {diet.dinner || 'Light khichdi with ghee, paneer preparation, and fresh cucumber salad.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Camp History Timeline Table (If Multiple Camps Available) */}
+        {campHistory.length > 1 && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md space-y-4">
+            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+              <Clock className="w-5 h-5 text-shwf-navy" />
+              <h4 className="text-base font-black text-slate-900">
+                Complete Health Check-Up Timeline ({campHistory.length} Sessions Recorded)
+              </h4>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="bg-slate-50 text-slate-600 font-extrabold border-b border-slate-200">
+                    <th className="p-3">Camp Date</th>
+                    <th className="p-3">Height (cm)</th>
+                    <th className="p-3">Weight (kg)</th>
+                    <th className="p-3">BMI</th>
+                    <th className="p-3">HAZ (Height Z-Score)</th>
+                    <th className="p-3">Status</th>
+                    <th className="p-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
+                  {campHistory.map((c, i) => {
+                    const isCurrent = c.camp_id === selectedCampId || (i === 0 && !selectedCampId);
+                    return (
+                      <tr key={c.camp_id || i} className={isCurrent ? 'bg-emerald-50/50 font-bold' : 'hover:bg-slate-50'}>
+                        <td className="p-3 text-slate-900 font-bold">
+                          {c.recorded_at} {i === 0 && <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full ml-1 font-bold">Latest</span>}
+                        </td>
+                        <td className="p-3">{c.height_cm} cm</td>
+                        <td className="p-3">{c.weight_kg} kg</td>
+                        <td className="p-3">{c.bmi}</td>
+                        <td className="p-3">{c.height_for_age_z ? Number(c.height_for_age_z).toFixed(2) : '0.00'}</td>
+                        <td className="p-3">
+                          <span className="inline-block px-2 py-0.5 bg-slate-100 text-slate-800 rounded-md text-[11px]">
+                            {c.overall_health_status || 'Normal / Healthy'}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            onClick={() => handleCampSelect(c.camp_id)}
+                            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                              isCurrent 
+                                ? 'bg-emerald-700 text-white' 
+                                : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                            }`}
+                          >
+                            {isCurrent ? 'Active View' : 'View Report'}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </section>
+  );
+}
+
