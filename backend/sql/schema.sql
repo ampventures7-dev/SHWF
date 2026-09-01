@@ -117,10 +117,23 @@ CREATE INDEX IF NOT EXISTS idx_generated_reports_student ON generated_reports(st
 CREATE INDEX IF NOT EXISTS idx_generated_reports_expiry ON generated_reports(expires_at);
 
 -- ============================================================================
--- MAINTENANCE & CLEANUP CONCEPT (TODO: Run via pg_cron or scheduled worker)
--- Purge expired OTP requests older than 24 hours:
--- DELETE FROM otp_requests WHERE expires_at < now() - INTERVAL '24 hours';
+-- 8. ENQUIRIES TABLE (Follow-Up & School Camp Requests)
 -- ============================================================================
+CREATE TABLE IF NOT EXISTS enquiries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name TEXT NOT NULL,
+    mobile TEXT NOT NULL,
+    persona TEXT NULL DEFAULT 'other',
+    reason TEXT NOT NULL,
+    organization_or_city TEXT NULL,
+    source TEXT NOT NULL,
+    message TEXT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_enquiries_created ON enquiries(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_enquiries_mobile ON enquiries(mobile);
+
 
 
 
