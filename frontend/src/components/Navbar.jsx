@@ -14,12 +14,13 @@ export default function Navbar({
 
   const navLinks = [
     { name: t('nav.home', 'Home'), href: '#home' },
-    { name: t('nav.donate', 'Donate & Bank Details'), href: '#donate' },
     { name: t('nav.portal', 'Student Portal'), href: '#portal' },
     { name: t('nav.calculator', 'Growth Calculator'), href: '#calculator' },
     { name: t('nav.pillars', 'Pillars & Impact'), href: '#pillars' },
+    { name: t('nav.donate', 'Donate & Bank Details'), href: '#donate' },
     { name: t('nav.about', 'About Us'), href: '#about' },
   ];
+
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">

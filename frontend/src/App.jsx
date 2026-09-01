@@ -136,16 +136,10 @@ export default function App() {
         isUserLoggedIn={!!authToken}
       />
 
-      {/* Hero Section */}
+      {/* 1. Hero Section */}
       <Hero />
 
-      {/* Prominent Front-Page Donation & Bank Details Section with QR Code */}
-      <DonationSection onToast={addToast} />
-
-      {/* Core Transformation Pillars (Reliance Foundation Style) */}
-      <Pillars />
-
-      {/* Student Health Portal OR Active Digital Health Dashboard */}
+      {/* 2. Student Health Portal OR Active Digital Health Dashboard */}
       {activeDashboardStudent && authToken ? (
         <div id="dashboard-view">
           <HealthDashboard
@@ -162,11 +156,18 @@ export default function App() {
         />
       )}
 
-      {/* WHO Child Growth Sandbox Calculator */}
+      {/* 3. WHO Child Growth Sandbox Calculator */}
       <GrowthCalculator onToast={addToast} />
 
-      {/* Official Noble NGO Footer (Strictly NO EMAIL) */}
+      {/* 4. Core Transformation Pillars (Reliance Foundation Style) */}
+      <Pillars />
+
+      {/* 5. Prominent Donation & Bank Details Section (Second Last Section) */}
+      <DonationSection onToast={addToast} />
+
+      {/* 6. Official Noble NGO Footer (Strictly NO EMAIL) */}
       <Footer />
+
 
       {/* 1. Admin Password Sign-In Modal (Protected Barrier) */}
       <AdminLoginModal
