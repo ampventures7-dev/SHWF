@@ -82,13 +82,15 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
   };
 
   const handleCopyDeepLink = () => {
-    const deepLink = report?.student_deep_link || `${window.location.origin}/?student_id=${student.student_id}#portal`;
+    const sId = report?.student_id || student?.student_id || 'STD-2026-001';
+    const deepLink = report?.student_deep_link || `${window.location.origin}/?student_id=${encodeURIComponent(sId)}#portal`;
     navigator.clipboard.writeText(deepLink).then(() => {
       setCopiedLink(true);
       if (onToast) onToast(t('dashboard.linkCopied', 'Portal link copied to clipboard!'), 'success');
       setTimeout(() => setCopiedLink(false), 2500);
     });
   };
+
 
   if (loading && !report) {
     return (
@@ -203,7 +205,11 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
   const growthForecast = (report?.growth_forecast && report.growth_forecast.six_month_forecast) ? report.growth_forecast : defaultGrowthForecast;
   const immunizations = (report?.immunizations && report.immunizations.length > 0) ? report.immunizations : defaultImmunizations;
   const preventiveRecalls = (report?.preventive_recalls && report.preventive_recalls.length > 0) ? report.preventive_recalls : defaultPreventiveRecalls;
-  const qrCodeDataUri = report?.qr_code_data_uri;
+  
+  const currentStudentId = report?.student_id || student?.student_id || 'STD-2026-001';
+  const directDeepLink = report?.student_deep_link || `${window.location.origin}/?student_id=${encodeURIComponent(currentStudentId)}#portal`;
+  const qrCodeDataUri = report?.qr_code_data_uri || `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=8&data=${encodeURIComponent(directDeepLink)}`;
+
 
 
   const getHazBadge = (z) => {
