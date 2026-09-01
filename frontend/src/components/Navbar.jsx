@@ -18,28 +18,25 @@ export default function Navbar({
     { name: t('nav.calculator', 'Growth Calculator'), href: '#calculator' },
     { name: t('nav.pillars', 'Pillars & Impact'), href: '#pillars' },
     { name: t('nav.gallery', 'Camp Gallery'), href: '#gallery' },
-    { name: t('nav.donate', 'Donate & Bank Details'), href: '#donate' },
     { name: t('nav.about', 'About Us'), href: '#about' },
   ];
 
-
-
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20 gap-4">
+      <div className="w-full max-w-[1500px] mx-auto px-3 sm:px-5 lg:px-6">
+        <div className="flex justify-between items-center h-20 gap-2 xl:gap-4">
           {/* Logo */}
           <a href="#home" className="flex items-center flex-shrink-0">
             <Logo />
           </a>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden xl:flex items-center gap-5 2xl:gap-7 flex-shrink-0">
+          <nav className="hidden xl:flex items-center gap-3.5 2xl:gap-6 flex-shrink-0">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-[13.5px] 2xl:text-[14.5px] font-bold text-shwf-navy hover:text-shwf-orange transition-colors relative py-1.5 whitespace-nowrap tracking-tight after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2.5px] after:bg-shwf-orange after:rounded-full after:transition-all hover:after:w-full"
+                className="text-[13px] 2xl:text-[14px] font-bold text-shwf-navy hover:text-shwf-orange transition-colors relative py-1.5 whitespace-nowrap tracking-tight after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-shwf-orange after:rounded-full after:transition-all hover:after:w-full"
               >
                 {link.name}
               </a>
@@ -47,16 +44,17 @@ export default function Navbar({
           </nav>
 
           {/* Action Buttons */}
-          <div className="hidden lg:flex items-center gap-2 2xl:gap-3 flex-shrink-0">
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2 flex-shrink-0">
             {/* Parent Sign-In Button */}
             <button
               onClick={onOpenUserLogin}
-              className="inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 font-bold text-xs 2xl:text-[13px] px-3.5 py-2.5 rounded-full shadow-sm hover:shadow transition-all whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 font-bold text-xs px-3 py-2 rounded-full shadow-sm hover:shadow transition-all whitespace-nowrap cursor-pointer"
             >
               {isUserLoggedIn ? (
                 <>
                   <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{t('nav.studentActive', 'Student Session Active')}</span>
+                  <span className="hidden xl:inline">{t('nav.studentActive', 'Student Session Active')}</span>
+                  <span className="xl:hidden">Active</span>
                 </>
               ) : (
                 <>
@@ -69,7 +67,7 @@ export default function Navbar({
             {/* Admin Ingestion Button */}
             <button
               onClick={onOpenAdmin}
-              className="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-shwf-navy border border-slate-300 font-bold text-xs 2xl:text-[13px] px-3.5 py-2.5 rounded-full shadow-sm hover:shadow transition-all whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-shwf-navy border border-slate-300 font-bold text-xs px-3 py-2 rounded-full shadow-sm hover:shadow transition-all whitespace-nowrap cursor-pointer"
             >
               <span className={`w-2 h-2 rounded-full ${isAdminLoggedIn ? 'bg-emerald-500 animate-pulse' : 'bg-emerald-500'}`}></span>
               <Shield className="w-3.5 h-3.5 text-shwf-navy" />
@@ -79,7 +77,7 @@ export default function Navbar({
             {/* Donate CTA */}
             <a
               href="#donate"
-              className="inline-flex items-center gap-1.5 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-extrabold text-xs 2xl:text-[13px] px-4.5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-extrabold text-xs px-3.5 py-2 rounded-full shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 whitespace-nowrap cursor-pointer"
             >
               <HeartHandshake className="w-4 h-4" />
               <span>{t('nav.donateNow', 'Donate Now')}</span>
@@ -95,6 +93,7 @@ export default function Navbar({
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+
 
 
         {/* Mobile Dropdown Menu */}
