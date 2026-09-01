@@ -9,7 +9,8 @@ import {
   getSchoolsForDistrict
 } from '../data/indiaGeoData';
 
-const API_BASE = ""; // Relative path allows Vite proxy or direct production routing
+const API_BASE = import.meta.env.VITE_API_URL || ""; // Supports custom backend domain or relative proxy in production
+
 
 export const API = {
   async getStates() {
