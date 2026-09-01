@@ -13,6 +13,7 @@ from app.services.ml_engine import (
     generate_student_qr_code,
     generate_preventive_schedule,
     generate_growth_forecast,
+    generate_audio_summary_script,
 )
 from app.models.report import (
     PredictReportRequest,
@@ -30,8 +31,10 @@ from app.models.report import (
     PreventiveRecall,
     ForecastMilestone,
     GrowthForecast,
+    AudioSummaryScript,
 )
 from app.services.zscore import calculate_zscores
+
 from app.services.pdf_generator import generate_report_pdf_async
 from app.services.storage_service import StorageService, get_storage_service
 
@@ -285,6 +288,23 @@ async def build_student_prediction_data(
         camp_history=camp_history,
     )
 
+    # 15. Audio Report Explainer Script (Hindi & English)
+    audio_summary_raw = generate_audio_summary_script(
+        student_name=student["full_name"],
+        vitals={
+            "height_cm": height_cm,
+            "weight_kg": weight_kg,
+            "bmi": bmi,
+            "age_months": age_months,
+            "gender": gender,
+        },
+        zscores=zscores_dict,
+        risks=risks_data,
+        diet_plan=diet_data,
+        growth_forecast=forecast_raw,
+        preventive_recalls=recalls_raw,
+    )
+
     report_response = PredictionReportResponse(
         student_id=student["student_id"],
         full_name=student["full_name"],
@@ -316,7 +336,9 @@ async def build_student_prediction_data(
         immunizations=[ImmunizationItem(**item) for item in immunizations_raw],
         preventive_recalls=[PreventiveRecall(**recall) for recall in recalls_raw],
         growth_forecast=GrowthForecast(**forecast_raw) if forecast_raw else None,
+        audio_summary=AudioSummaryScript(**audio_summary_raw) if audio_summary_raw else None,
     )
+
 
     return report_response, student, camp_extra_data
 

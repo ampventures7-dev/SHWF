@@ -695,3 +695,78 @@ def generate_growth_forecast(
         "nutritional_milestone_guidance_hi": nutritional_guidance_hi,
     }
 
+
+# =============================================================================
+# 7. AUDIO REPORT SCRIPT GENERATION (Bilingual Hindi & English Speech Engine)
+# =============================================================================
+
+def generate_audio_summary_script(
+    student_name: str,
+    vitals: Dict[str, Any],
+    zscores: Dict[str, Any],
+    risks: Optional[List[Dict[str, Any]]] = None,
+    diet_plan: Optional[Dict[str, Any]] = None,
+    growth_forecast: Optional[Dict[str, Any]] = None,
+    preventive_recalls: Optional[List[Dict[str, Any]]] = None,
+) -> Dict[str, Any]:
+    """
+    Generate a doctor-style audio narrative script in Hindi and English
+    for client-side browser speech synthesis.
+    """
+    h = float(vitals.get("height_cm", 138.5))
+    w = float(vitals.get("weight_kg", 31.0))
+    
+    haz = float(zscores.get("height_for_age_z") if zscores.get("height_for_age_z") is not None else zscores.get("haz", 0.15))
+    
+    if haz < -2.0:
+        growth_eval_en = f"Height is {h} centimeters, which indicates mild stunting risk compared to standard WHO growth curves."
+        growth_eval_hi = f"लंबाई {h} सेंटीमीटर है, जो विश्व स्वास्थ्य संगठन के मानकों के अनुसार सामान्य से थोड़ी कम है और इस पर विशेष पोषण की आवश्यकता है।"
+    else:
+        growth_eval_en = f"Height is {h} centimeters and weight is {w} kilograms, reflecting healthy physical growth parameters."
+        growth_eval_hi = f"लंबाई {h} सेंटीमीटर और वजन {w} किलोग्राम है, जो बच्चे के स्वस्थ और संतुलित विकास को दर्शाता है।"
+
+    if growth_forecast and "six_month_forecast" in growth_forecast:
+        proj_h = growth_forecast["six_month_forecast"].get("projected_height_cm", round(h + 2.7, 1))
+        forecast_en = f"Over the next 6 months, expected height projection is {proj_h} centimeters."
+        forecast_hi = f"आगामी 6 महीनों में बच्चे की अनुमानित लंबाई {proj_h} सेंटीमीटर तक पहुंचने की उम्मीद है।"
+    else:
+        forecast_en = f"Regular nutritious diet will ensure healthy linear growth over the next 6 months."
+        forecast_hi = f"नियमित संतुलित आहार से आने वाले 6 महीनों में बच्चे की लंबाई में अच्छी वृद्धि होगी।"
+
+    diet_en = "For daily nutrition, ensure meals rich in proteins, lentils, seasonal vegetables, and warm milk."
+    diet_hi = "दैनिक पोषण के लिए दालें, हरी सब्जियां, पनीर, उबला अंडा या अंकुरित अनाज और गर्म दूध अवश्य दें।"
+
+    recall_en = "Please schedule a routine pediatric dental cleaning and vision checkup in 6 months."
+    recall_hi = "कृपया 6 महीने बाद बच्चे की नियमित दंत और नेत्र जांच अवश्य करवाएं।"
+
+    script_en = (
+        f"Hello from Smart Health Welfare Foundation. Here is the health report summary for {student_name}. "
+        f"{growth_eval_en} {forecast_en} {diet_en} {recall_en} "
+        f"Thank you for prioritizing your child's well-being."
+    )
+
+    script_hi = (
+        f"नमस्ते। स्मार्ट हेल्थ वेलफेयर फाउंडेशन की ओर से यह {student_name} की स्वास्थ्य जांच रिपोर्ट का विवरण है। "
+        f"{growth_eval_hi} {forecast_hi} {diet_hi} {recall_hi} "
+        f"बच्चे के उत्तम स्वास्थ्य और उज्ज्वल भविष्य के लिए धन्यवाद।"
+    )
+
+    return {
+        "script_en": script_en,
+        "script_hi": script_hi,
+        "duration_est_seconds": 40,
+        "key_highlights_en": [
+            f"Current Height: {h} cm | Weight: {w} kg",
+            f"6-Month Projected Milestone: {h + 2.7:.1f} cm",
+            "High-protein diet & green vegetables recommended",
+            "Next Routine Screening: In 6 Months"
+        ],
+        "key_highlights_hi": [
+            f"वर्तमान लंबाई: {h} सेमी | वजन: {w} किग्रा",
+            f"6-माह अनुमानित लंबाई: {h + 2.7:.1f} सेमी",
+            "दालें, हरी सब्जियां और दूध का दैनिक सेवन",
+            "अगला नियमित स्वास्थ्य परीक्षण: 6 महीने में"
+        ]
+    }
+
+

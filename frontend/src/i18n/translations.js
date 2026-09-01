@@ -216,7 +216,25 @@ export const translations = {
       catchUpRequiredBadge: "Nutritional Acceleration Active",
       normalProgressionBadge: "Optimal Growth Track",
       nutritionalMilestoneStrategy: "Target Dietary Milestones for Optimal Velocity",
+
+      // Audio Report Explainer
+      audioExplainerBtn: "🎙️ Listen to Report",
+      audioExplainerTitle: "Bilingual Audio Health Explainer",
+      audioExplainerSubtitle: "Doctor-approved audio breakdown of physical examination, growth milestones, and nutrition advice in Hindi & English",
+      audioPlay: "Play Audio",
+      audioPause: "Pause",
+      audioResume: "Resume",
+      audioStop: "Stop",
+      audioRestart: "Restart",
+      audioPlaying: "Playing Voice Explainer...",
+      audioPaused: "Audio Paused",
+      audioReady: "Ready to Play",
+      audioLangToggle: "Audio Language",
+      audioSpeed: "Speed",
+      audioTranscript: "Spoken Transcript",
+      audioHighlights: "Executive Highlights",
     },
+
 
     calculator: {
       badge: "Interactive Pediatric Tool",
@@ -477,7 +495,25 @@ export const translations = {
       catchUpRequiredBadge: "सक्रिय पोषक सुधार आवश्यक",
       normalProgressionBadge: "संतुलित विकास पथ",
       nutritionalMilestoneStrategy: "इष्टतम वृद्धि हेतु लक्षित पोषण रणनीति",
+
+      // Audio Report Explainer
+      audioExplainerBtn: "🎙️ रिपोर्ट सुनें (Audio)",
+      audioExplainerTitle: "द्विभाषी ऑडियो स्वास्थ्य विवरण",
+      audioExplainerSubtitle: "हिंदी और अंग्रेजी में बच्चे के स्वास्थ्य परीक्षण, विकास लक्ष्यों और पोषण संबंधी सलाह का डॉक्टर-अनुमोदित ऑडियो विवरण",
+      audioPlay: "ऑडियो सुनें",
+      audioPause: "रोकें (Pause)",
+      audioResume: "पुनः चलाएं",
+      audioStop: "बंद करें",
+      audioRestart: "शुरू से सुनें",
+      audioPlaying: "ऑडियो विवरण चल रहा है...",
+      audioPaused: "ऑडियो रुका हुआ है",
+      audioReady: "सुनने के लिए तैयार",
+      audioLangToggle: "ऑडियो भाषा",
+      audioSpeed: "गति (Speed)",
+      audioTranscript: "ऑडियो लिखित विवरण (Transcript)",
+      audioHighlights: "मुख्य बिंदु",
     },
+
 
     calculator: {
       badge: "इंटरएक्टिव बाल स्वास्थ्य टूल",

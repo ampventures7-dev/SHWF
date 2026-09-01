@@ -4,10 +4,11 @@ import {
   AlertTriangle, ShieldAlert, Loader2, Calendar, TrendingUp, Award, 
   FileText, Clock, ArrowUpRight, Scale, Ruler, Eye, Stethoscope, 
   ChevronRight, QrCode, Copy, Check, Share2, ShieldCheck, X, Syringe,
-  CalendarCheck, Compass
+  CalendarCheck, Compass, Volume2, Radio
 } from 'lucide-react';
 import { API } from '../services/api';
 import { useLanguage } from '../context/LanguageContext';
+import AudioReportPlayer from './AudioReportPlayer';
 
 export default function HealthDashboard({ student, token, onBack, onToast }) {
   const { language, t } = useLanguage();
@@ -16,8 +17,10 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
   const [downloading, setDownloading] = useState(false);
   const [selectedCampId, setSelectedCampId] = useState(null);
   const [showQrModal, setShowQrModal] = useState(false);
+  const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [preventiveTab, setPreventiveTab] = useState('immunization'); // 'immunization' | 'recalls'
+
 
   const fetchReportData = async (campId = null) => {
     setLoading(true);
@@ -314,10 +317,19 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap relative z-10">
+            {/* Audio Voice Explainer Button (Hindi & English) */}
+            <button
+              onClick={() => setIsAudioModalOpen(true)}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white font-extrabold text-sm px-5 py-3.5 rounded-2xl shadow-lg shadow-teal-900/20 border border-teal-300/30 backdrop-blur-sm transition-all transform hover:-translate-y-0.5 cursor-pointer"
+            >
+              <Volume2 className="w-4 h-4 animate-bounce text-white" />
+              <span>{t('dashboard.audioExplainerBtn', '🎙️ Listen to Report')}</span>
+            </button>
+
             {/* Point 5: QR Code Share Button */}
             <button
               onClick={() => setShowQrModal(true)}
-              className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white font-bold text-sm px-4 sm:px-5 py-3.5 rounded-2xl border border-white/20 shadow-md backdrop-blur-sm transition-all"
+              className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white font-bold text-sm px-4 sm:px-5 py-3.5 rounded-2xl border border-white/20 shadow-md backdrop-blur-sm transition-all cursor-pointer"
             >
               <QrCode className="w-4 h-4 text-amber-300" />
               <span>{t('dashboard.shareHealthCard', 'Health QR')}</span>
@@ -327,7 +339,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             <button
               onClick={handleDownloadPdf}
               disabled={downloading}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-black text-sm px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 flex-shrink-0"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-black text-sm px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 flex-shrink-0 cursor-pointer"
             >
               {downloading ? (
                 <>
@@ -343,6 +355,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             </button>
           </div>
         </div>
+
 
         {/* ========================================================================= */}
         {/* ⭐ POINT 7: AI 6 & 12-MONTH PEDIATRIC GROWTH TRAJECTORY FORECASTING ⭐ */}
@@ -892,9 +905,20 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
           </div>
         </div>
       )}
+
+      {/* Audio Report Explainer Modal Dialog */}
+      <AudioReportPlayer
+        isOpen={isAudioModalOpen}
+        onClose={() => setIsAudioModalOpen(false)}
+        student={student}
+        report={report}
+        onToast={onToast}
+      />
     </section>
   );
 }
+
+
 
 
 

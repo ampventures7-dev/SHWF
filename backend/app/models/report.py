@@ -144,6 +144,15 @@ class GrowthForecast(BaseModel):
     nutritional_milestone_guidance_hi: str = Field(..., description="Specific dietary advice to achieve milestone targets (HI)")
 
 
+class AudioSummaryScript(BaseModel):
+    """Bilingual doctor-style conversational audio script for Web Speech synthesis."""
+    script_en: str = Field(..., description="Spoken narrative audio script in English")
+    script_hi: str = Field(..., description="Spoken narrative audio script in Hindi")
+    duration_est_seconds: int = Field(default=45, description="Estimated audio playback duration in seconds")
+    key_highlights_en: List[str] = Field(default_factory=list, description="Bullet point highlights in English")
+    key_highlights_hi: List[str] = Field(default_factory=list, description="Bullet point highlights in Hindi")
+
+
 class PredictionReportResponse(BaseModel):
     """Full health risk prediction, dietary recommendation report, and multi-session growth trajectory."""
     student_id: str = Field(..., description="Authenticated student identification number")
@@ -164,6 +173,8 @@ class PredictionReportResponse(BaseModel):
     immunizations: List[ImmunizationItem] = Field(default_factory=list, description="IAP pediatric immunization schedule & status")
     preventive_recalls: List[PreventiveRecall] = Field(default_factory=list, description="6-month dental and vision recall schedule")
     growth_forecast: Optional[GrowthForecast] = Field(default=None, description="AI 6 & 12-month pediatric growth projection")
+    audio_summary: Optional[AudioSummaryScript] = Field(default=None, description="Bilingual audio narrative script for speech synthesis")
+
 
 
 

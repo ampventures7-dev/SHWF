@@ -329,10 +329,28 @@ export const API = {
           },
           nutritional_milestone_guidance: "Incorporate dal, paneer, eggs/sprouts, seasonal fruits, and warm milk daily to achieve optimal height velocity.",
           nutritional_milestone_guidance_hi: "विकास के लिए दैनिक भोजन में दाल, पनीर, अंकुरित अनाज, मौसमी फल और दूध शामिल करें।"
+        },
+        audio_summary: {
+          script_en: "Hello from Smart Health Welfare Foundation. Here is the health report summary for Aarav Sharma. Height is 138.5 centimeters and weight is 31 kilograms, reflecting healthy physical growth parameters. Over the next 6 months, expected height projection is 141.2 centimeters. For daily nutrition, ensure meals rich in proteins, lentils, seasonal vegetables, and warm milk. Please schedule a routine pediatric dental cleaning and vision checkup in 6 months. Thank you for prioritizing your child's well-being.",
+          script_hi: "नमस्ते। स्मार्ट हेल्थ वेलफेयर फाउंडेशन की ओर से यह आरव शर्मा की स्वास्थ्य जांच रिपोर्ट का विवरण है। लंबाई 138.5 सेंटीमीटर और वजन 31 किलोग्राम है, जो बच्चे के स्वस्थ और संतुलित विकास को दर्शाता है। आगामी 6 महीनों में बच्चे की अनुमानित लंबाई 141.2 सेंटीमीटर तक पहुंचने की उम्मीद है। दैनिक पोषण के लिए दालें, हरी सब्जियां, पनीर, उबला अंडा या अंकुरित अनाज और गर्म दूध अवश्य दें। कृपया 6 महीने बाद बच्चे की नियमित दंत और नेत्र जांच अवश्य करवाएं। बच्चे के उत्तम स्वास्थ्य और उज्ज्वल भविष्य के लिए धन्यवाद।",
+          duration_est_seconds: 40,
+          key_highlights_en: [
+            "Current Height: 138.5 cm | Weight: 31.0 kg",
+            "6-Month Projected Milestone: 141.2 cm",
+            "High-protein diet & green vegetables recommended",
+            "Next Routine Screening: In 6 Months"
+          ],
+          key_highlights_hi: [
+            "वर्तमान लंबाई: 138.5 सेमी | वजन: 31.0 किग्रा",
+            "6-माह अनुमानित लंबाई: 141.2 सेमी",
+            "दालें, हरी सब्जियां और दूध का दैनिक सेवन",
+            "अगला नियमित स्वास्थ्य परीक्षण: 6 महीने में"
+          ]
         }
       };
     }
   },
+
 
 
   async adminLogin(username, password) {
