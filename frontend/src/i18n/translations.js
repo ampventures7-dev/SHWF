@@ -295,13 +295,14 @@ export const translations = {
     },
     nav: {
       home: "मुख्य पृष्ठ",
-      donate: "दान एवं बैंक विवरण",
-      portal: "छात्र स्वास्थ्य पोर्टल",
+      donate: "दान एवं बैंक",
+      portal: "छात्र पोर्टल",
       calculator: "वृद्धि कैलकुलेटर",
       pillars: "स्तंभ एवं प्रभाव",
       about: "हमारे बारे में",
       parentSignIn: "अभिभावक लॉगिन (OTP)",
       studentActive: "सक्रिय छात्र सत्र",
+
       adminPortal: "एडमिन पोर्टल",
       adminIngestion: "एडमिन डेटा प्रविष्टि",
       donateNow: "दान करें",
