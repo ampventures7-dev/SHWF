@@ -13,8 +13,10 @@ import AdminLoginModal from './components/AdminLoginModal';
 import HealthDashboard from './components/HealthDashboard';
 import GrowthCalculator from './components/GrowthCalculator';
 import AdminPortal from './components/AdminPortal';
+import EnquiryForm from './components/EnquiryForm';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
+
 
 export default function App() {
   // Authentication & Session States
@@ -167,11 +169,15 @@ export default function App() {
       {/* 5. School Health Camp Photo Gallery */}
       <Gallery />
 
-      {/* 6. Prominent Donation & Bank Details Section (Second Last Section) */}
+      {/* 6. Prominent Donation & Bank Details Section */}
       <DonationSection onToast={addToast} />
 
-      {/* 7. Official Noble NGO Footer (Strictly NO EMAIL) */}
+      {/* 7. Follow-Up & School Camp Enquiry Form */}
+      <EnquiryForm onToast={addToast} />
+
+      {/* 8. Official Noble NGO Footer (Strictly NO EMAIL) */}
       <Footer />
+
 
 
 

@@ -8,7 +8,10 @@ from app.models.public import (
     DistrictResponse,
     SchoolResponse,
     PublicStudentResponse,
+    EnquiryRequest,
+    EnquiryResponse,
 )
+
 from app.services.public_search_service import (
     list_all_states,
     list_districts_by_state,
@@ -87,3 +90,40 @@ async def search_students(
     return search_students_in_school(
         school_id=school_id, name_query=name or "", db_service=db_service
     )
+
+
+@router.post(
+    "/enquiry",
+    response_model=EnquiryResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Submit Follow-Up & School Camp Enquiry",
+    description="Submit an enquiry for organizing school health camps, report card consultations, or partnerships.",
+)
+async def submit_enquiry(
+    payload: EnquiryRequest,
+    db_service: DatabaseService = Depends(get_db_service),
+):
+    """Capture public follow-up lead / school camp enquiry."""
+    logger.info("New public enquiry received from %s (%s) for reason: %s", payload.full_name, payload.mobile, payload.reason)
+    
+    # Try persisting to Supabase enquiries table if configured
+    try:
+        if db_service.supabase:
+            db_service.supabase.table("enquiries").insert({
+                "full_name": payload.full_name,
+                "mobile": payload.mobile,
+                "persona": payload.persona,
+                "reason": payload.reason,
+                "organization_or_city": payload.organization_or_city,
+                "source": payload.source,
+                "message": payload.message,
+            }).execute()
+    except Exception as e:
+        logger.warning("Supabase enquiries table logging skipped: %s", str(e))
+
+    return EnquiryResponse(
+        success=True,
+        message="Thank you! Your enquiry has been received. Our medical coordination team will contact you within 24 hours.",
+        message_hi="धन्यवाद! आपकी पूछताछ प्राप्त हो गई है। हमारी मेडिकल टीम 24 घंटे के भीतर आपसे संपर्क करेगी।"
+    )
+

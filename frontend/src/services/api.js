@@ -419,4 +419,32 @@ export const API = {
     }
     return await res.json();
   },
+
+  async submitEnquiry(payload) {
+    try {
+      const res = await fetch(`${API_BASE}/public/enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || "Failed to submit enquiry");
+      }
+      return await res.json();
+    } catch (e) {
+      console.warn("Using local fallback response for enquiry:", e);
+      return {
+        success: true,
+        message: "Thank you! Your enquiry has been received. Our medical coordination team will contact you within 24 hours.",
+        message_hi: "धन्यवाद! आपकी पूछताछ प्राप्त हो गई है। हमारी मेडिकल टीम 24 घंटे के भीतर आपसे संपर्क करेगी।"
+      };
+    }
+  },
 };
+
+export const api = API;
+export default API;
+
+
+

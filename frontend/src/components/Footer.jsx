@@ -64,7 +64,18 @@ export default function Footer() {
                   <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> {t('nav.pillars', 'Core Impact Pillars')}
                 </a>
               </li>
+              <li>
+                <a href="#gallery" className="hover:text-shwf-orange transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> {t('nav.gallery', 'Camp Gallery')}
+                </a>
+              </li>
+              <li>
+                <a href="#enquiry" className="hover:text-shwf-orange transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> {t('enquiry.badge', 'Camp & Consultation Enquiry')}
+                </a>
+              </li>
             </ul>
+
           </div>
 
           {/* Col 3: Official Contact & Bank Summary (Span 4) */}
