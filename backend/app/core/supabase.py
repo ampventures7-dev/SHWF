@@ -66,7 +66,26 @@ class DatabaseService:
                 for row in response.data:
                     school_map[row["school_code"]] = row["id"]
 
+        # Auto-create any missing school codes on the fly so admins are never blocked
+        missing_codes = [c for c in codes_list if c not in school_map]
+        if missing_codes:
+            try:
+                dist_res = self.client.table("districts").select("id").limit(1).execute()
+                if dist_res.data:
+                    default_dist_id = dist_res.data[0]["id"]
+                    for m_code in missing_codes:
+                        ins_res = self.client.table("schools").insert({
+                            "district_id": default_dist_id,
+                            "name": f"School ({m_code})",
+                            "school_code": m_code
+                        }).execute()
+                        if ins_res.data:
+                            school_map[m_code] = ins_res.data[0]["id"]
+            except Exception as auto_err:
+                logger.warning(f"Could not auto-create missing school codes {missing_codes}: {auto_err}")
+
         return school_map
+
 
     def get_existing_student_keys(
         self, school_ids: Set[str], student_ids: Set[str]
