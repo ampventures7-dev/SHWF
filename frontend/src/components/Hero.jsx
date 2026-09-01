@@ -1,7 +1,10 @@
 import React from 'react';
 import { ShieldCheck, Award, Users, CheckCircle2, ArrowRight, HeartHandshake, QrCode } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Hero() {
+  const { t } = useLanguage();
+
   return (
     <section id="home" className="relative bg-gradient-to-br from-shwf-navy-dark via-shwf-navy to-[#003882] text-white pt-16 pb-28 overflow-hidden">
       {/* Background Decorative Glow Orbs */}
@@ -16,17 +19,21 @@ export default function Hero() {
             {/* Pill Tag */}
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#a7f3d0] mb-6">
               <span className="w-2 h-2 rounded-full bg-shwf-green animate-ping"></span>
-              Transforming Lives, Nurturing Healthier Futures
+              {t('hero.badge', 'National School Health & Nutrition Surveillance Initiative')}
             </div>
 
             {/* Main Title */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black leading-[1.15] text-white tracking-tight mb-6">
-              Building a <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-shwf-orange">Healthier, Educated</span> & Compassionate Society
+              {t('hero.titleStart', 'Building a')}{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-shwf-orange">
+                {t('hero.titleHighlight', 'Healthier, Educated')}
+              </span>{' '}
+              {t('hero.titleEnd', '& Compassionate Society')}
             </h1>
 
             {/* Lead Narrative */}
             <p className="text-base sm:text-lg text-slate-200 leading-relaxed mb-8 max-w-2xl">
-              Smart Health Welfare Foundation is committed to grassroots child nutrition, comprehensive school health screenings, WHO LMS growth assessments, and preventive pediatric interventions across India.
+              {t('hero.subtitle', 'Smart Health Welfare Foundation is committed to grassroots child nutrition, comprehensive school health screenings, WHO LMS growth assessments, and preventive pediatric interventions across India.')}
             </p>
 
             {/* CTAs */}
@@ -36,13 +43,13 @@ export default function Hero() {
                 className="inline-flex items-center gap-2.5 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-bold text-base px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 pulse-button"
               >
                 <HeartHandshake className="w-5 h-5" />
-                <span>Donate & Support</span>
+                <span>{t('nav.donateNow', 'Donate & Support')}</span>
               </a>
               <a
                 href="#portal"
                 className="inline-flex items-center gap-2.5 bg-white/15 hover:bg-white text-white hover:text-shwf-navy border border-white/40 font-bold text-base px-7 py-3.5 rounded-full backdrop-blur-md transition-all"
               >
-                <span>Student Health Portal</span>
+                <span>{t('hero.searchCta', 'Search Child Health Record')}</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
@@ -51,11 +58,11 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-6 text-xs text-slate-300">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-shwf-green" />
-                <span>Govt. Registered NGO</span>
+                <span>Govt. Registered NGO (Sec 8)</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-shwf-green" />
-                <span>Certified Medical Team</span>
+                <span>Certified Medical Doctors</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-shwf-green" />
@@ -115,7 +122,7 @@ export default function Hero() {
                   href="#portal"
                   className="text-xs font-bold text-shwf-orange hover:text-amber-300 flex items-center gap-1 transition-colors"
                 >
-                  Search Student Record &rarr;
+                  {t('portal.viewHealthCard', 'Search Student Record')} &rarr;
                 </a>
               </div>
             </div>
@@ -129,23 +136,23 @@ export default function Hero() {
         <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-slate-900">
           
           <div className="text-center md:border-r border-slate-200 md:last:border-r-0 px-2">
-            <div className="text-3xl sm:text-4xl font-black text-shwf-navy mb-1">150+</div>
-            <div className="text-xs sm:text-sm font-bold text-slate-600">Partner Schools</div>
+            <div className="text-3xl sm:text-4xl font-black text-shwf-navy mb-1">{t('hero.stat2Number', '150+')}</div>
+            <div className="text-xs sm:text-sm font-bold text-slate-600">{t('hero.stat2Label', 'Partner Schools')}</div>
           </div>
 
           <div className="text-center md:border-r border-slate-200 md:last:border-r-0 px-2">
-            <div className="text-3xl sm:text-4xl font-black text-shwf-green mb-1">45,000+</div>
-            <div className="text-xs sm:text-sm font-bold text-slate-600">Children Screened</div>
+            <div className="text-3xl sm:text-4xl font-black text-shwf-green mb-1">{t('hero.stat1Number', '45,000+')}</div>
+            <div className="text-xs sm:text-sm font-bold text-slate-600">{t('hero.stat1Label', 'Children Screened')}</div>
           </div>
 
           <div className="text-center md:border-r border-slate-200 md:last:border-r-0 px-2">
-            <div className="text-3xl sm:text-4xl font-black text-shwf-orange mb-1">98.4%</div>
-            <div className="text-xs sm:text-sm font-bold text-slate-600">Nutrition Interventions</div>
+            <div className="text-3xl sm:text-4xl font-black text-shwf-orange mb-1">{t('hero.stat3Number', '100%')}</div>
+            <div className="text-xs sm:text-sm font-bold text-slate-600">{t('hero.stat3Label', 'WHO Growth Standards')}</div>
           </div>
 
           <div className="text-center px-2">
-            <div className="text-3xl sm:text-4xl font-black text-shwf-navy mb-1">100%</div>
-            <div className="text-xs sm:text-sm font-bold text-slate-600">NGO Transparency</div>
+            <div className="text-3xl sm:text-4xl font-black text-shwf-navy mb-1">{t('hero.stat4Number', '24/7')}</div>
+            <div className="text-xs sm:text-sm font-bold text-slate-600">{t('hero.stat4Label', 'Digital Report Access')}</div>
           </div>
 
         </div>

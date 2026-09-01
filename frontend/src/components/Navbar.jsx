@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Menu, X, HeartHandshake, KeyRound, UserCheck, Shield } from 'lucide-react';
+import { Menu, X, HeartHandshake, KeyRound, UserCheck, Shield, Languages } from 'lucide-react';
 import Logo from './Logo';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Navbar({
   onOpenAdmin,
@@ -9,14 +10,15 @@ export default function Navbar({
   isUserLoggedIn,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'Donate & Bank Details', href: '#donate' },
-    { name: 'Student Portal', href: '#portal' },
-    { name: 'Growth Calculator', href: '#calculator' },
-    { name: 'Pillars & Impact', href: '#pillars' },
-    { name: 'About Us', href: '#about' },
+    { name: t('nav.home', 'Home'), href: '#home' },
+    { name: t('nav.donate', 'Donate & Bank Details'), href: '#donate' },
+    { name: t('nav.portal', 'Student Portal'), href: '#portal' },
+    { name: t('nav.calculator', 'Growth Calculator'), href: '#calculator' },
+    { name: t('nav.pillars', 'Pillars & Impact'), href: '#pillars' },
+    { name: t('nav.about', 'About Us'), href: '#about' },
   ];
 
   return (
@@ -32,7 +34,7 @@ export default function Navbar({
           <nav className="hidden xl:flex items-center gap-6">
             {navLinks.map((link) => (
               <a
-                key={link.name}
+                key={link.href}
                 href={link.href}
                 className="text-[14px] font-semibold text-shwf-navy hover:text-shwf-orange transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-shwf-orange after:transition-all hover:after:w-full"
               >
@@ -51,12 +53,12 @@ export default function Navbar({
               {isUserLoggedIn ? (
                 <>
                   <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Student Session Active</span>
+                  <span>{t('nav.studentActive', 'Student Session Active')}</span>
                 </>
               ) : (
                 <>
                   <KeyRound className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Parent Sign-In (OTP)</span>
+                  <span>{t('nav.parentSignIn', 'Parent Sign-In (OTP)')}</span>
                 </>
               )}
             </button>
@@ -68,7 +70,7 @@ export default function Navbar({
             >
               <span className={`w-2 h-2 rounded-full ${isAdminLoggedIn ? 'bg-emerald-500 animate-pulse' : 'bg-emerald-500'}`}></span>
               <Shield className="w-3.5 h-3.5 text-shwf-navy" />
-              <span>{isAdminLoggedIn ? 'Admin Portal' : 'Admin Ingestion'}</span>
+              <span>{isAdminLoggedIn ? t('nav.adminPortal', 'Admin Portal') : t('nav.adminIngestion', 'Admin Ingestion')}</span>
             </button>
 
             {/* Donate CTA */}
@@ -77,7 +79,7 @@ export default function Navbar({
               className="inline-flex items-center gap-2 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-bold text-xs px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
             >
               <HeartHandshake className="w-4 h-4" />
-              <span>Donate Now</span>
+              <span>{t('nav.donateNow', 'Donate Now')}</span>
             </a>
           </div>
 
@@ -95,9 +97,37 @@ export default function Navbar({
         {mobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-slate-100 bg-white shadow-xl rounded-b-2xl animate-fadeIn">
             <div className="flex flex-col gap-2 px-2">
+              {/* Mobile Language Switcher */}
+              <div className="flex items-center justify-between px-4 py-2 bg-slate-50 rounded-xl mb-1">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                  <Languages className="w-4 h-4 text-shwf-navy" />
+                  <span>Language / भाषा:</span>
+                </div>
+                <div className="inline-flex bg-slate-200 p-0.5 rounded-lg text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setLanguage('en')}
+                    className={`px-3 py-1 rounded-md transition-all ${
+                      language === 'en' ? 'bg-white text-shwf-navy shadow-sm' : 'text-slate-600'
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLanguage('hi')}
+                    className={`px-3 py-1 rounded-md transition-all ${
+                      language === 'hi' ? 'bg-shwf-orange text-white shadow-sm' : 'text-slate-600'
+                    }`}
+                  >
+                    हिंदी
+                  </button>
+                </div>
+              </div>
+
               {navLinks.map((link) => (
                 <a
-                  key={link.name}
+                  key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-4 py-2.5 text-sm font-semibold text-shwf-navy hover:bg-shwf-navy-subtle rounded-lg transition-colors"
@@ -114,7 +144,7 @@ export default function Navbar({
                   className="flex items-center justify-center gap-2 bg-amber-50 border border-amber-300 text-amber-900 font-bold text-sm py-2.5 rounded-xl shadow-sm"
                 >
                   <KeyRound className="w-4 h-4 text-amber-600" />
-                  <span>Parent Sign-In (OTP Verification)</span>
+                  <span>{t('nav.parentSignIn', 'Parent Sign-In (OTP Verification)')}</span>
                 </button>
 
                 <button
@@ -125,7 +155,7 @@ export default function Navbar({
                   className="flex items-center justify-center gap-2 bg-slate-100 border border-slate-300 text-shwf-navy font-bold text-sm py-2.5 rounded-xl shadow-sm"
                 >
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>Admin & Data Ingestion (Password)</span>
+                  <span>{isAdminLoggedIn ? t('nav.adminPortal', 'Admin Portal') : t('nav.adminIngestion', 'Admin & Data Ingestion')}</span>
                 </button>
 
                 <a
@@ -134,7 +164,7 @@ export default function Navbar({
                   className="flex items-center justify-center gap-2 bg-shwf-orange text-white font-bold text-sm py-3 rounded-xl shadow-md"
                 >
                   <HeartHandshake className="w-4 h-4" />
-                  <span>Donate & Support</span>
+                  <span>{t('nav.donateNow', 'Donate & Support')}</span>
                 </a>
               </div>
             </div>

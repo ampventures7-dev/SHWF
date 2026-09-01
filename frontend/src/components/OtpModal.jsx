@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ShieldCheck, X, Loader2, KeyRound, RefreshCw, AlertCircle } from 'lucide-react';
 import { API } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function OtpModal({
   student,
@@ -9,6 +10,7 @@ export default function OtpModal({
   onToast,
   skipInitialDispatch = false,
 }) {
+  const { t } = useLanguage();
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
@@ -131,10 +133,10 @@ export default function OtpModal({
             <KeyRound className="w-8 h-8" />
           </div>
           <h3 className="text-2xl font-black text-shwf-navy">
-            Parent OTP Verification
+            {t('otpModal.title', 'Parent OTP Verification')}
           </h3>
           <p className="text-xs text-slate-500 mt-1">
-            Accessing records for: <strong className="text-slate-800">{student.full_name} ({student.student_id})</strong>
+            {t('otpModal.forStudent', 'Accessing records for:')} <strong className="text-slate-800">{student.full_name} ({student.student_id})</strong>
           </p>
           <div className="mt-2 inline-block bg-slate-100 px-3 py-1 rounded-full text-xs font-semibold text-slate-600">
             Sent to: {student.parent_phone_masked || '+91 ******1140'}
@@ -169,7 +171,7 @@ export default function OtpModal({
           {/* Timer & Resend */}
           <div className="text-center text-xs text-slate-500 mb-6">
             {!canResend ? (
-              <span>Resend OTP in <strong className="text-shwf-navy">{timer}s</strong></span>
+              <span>{t('otpModal.resendIn', 'Resend OTP in')} <strong className="text-shwf-navy">{timer}{t('otpModal.seconds', 's')}</strong></span>
             ) : (
               <button
                 type="button"
@@ -178,7 +180,7 @@ export default function OtpModal({
                 className="text-shwf-orange hover:text-shwf-orange-dark font-bold inline-flex items-center gap-1.5 transition-colors"
               >
                 {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-                <span>Resend OTP Code</span>
+                <span>{t('otpModal.resend', 'Resend OTP Code')}</span>
               </button>
             )}
           </div>
@@ -192,12 +194,12 @@ export default function OtpModal({
             {verifying ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Verifying Credentials...</span>
+                <span>{t('otpModal.verifying', 'Verifying Credentials...')}</span>
               </>
             ) : (
               <>
                 <ShieldCheck className="w-4 h-4" />
-                <span>Verify & View Report Card</span>
+                <span>{t('otpModal.verifyBtn', 'Verify & View Report Card')}</span>
               </>
             )}
           </button>
@@ -205,10 +207,11 @@ export default function OtpModal({
 
         {/* Security Note */}
         <p className="text-[11px] text-center text-slate-400 mt-4">
-          Protected by bcrypt hashed zero-knowledge token isolation.
+          {t('portal.privacyNotice', 'Protected by bcrypt hashed zero-knowledge token isolation.')}
         </p>
 
       </div>
     </div>
   );
 }
+

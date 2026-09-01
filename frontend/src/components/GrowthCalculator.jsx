@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Calculator, Sparkles, AlertCircle, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function GrowthCalculator({ onToast }) {
+  const { t, language } = useLanguage();
   const [ageYrs, setAgeYrs] = useState('10');
   const [ageMos, setAgeMos] = useState('6');
   const [gender, setGender] = useState('M');
@@ -26,21 +28,21 @@ export default function GrowthCalculator({ onToast }) {
     const bmi = (w / (heightM * heightM)).toFixed(1);
     const totalMonths = Math.round(yrs * 12 + mos);
 
-    let category = 'Healthy / Normal Growth Parameter';
+    let category = language === 'hi' ? 'सामान्य एवं स्वस्थ वृद्धि पैरामीटर' : 'Healthy / Normal Growth Parameter';
     let badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
 
     if (bmi < 13.5) {
-      category = 'Underweight / Mild Malnutrition Indicator';
+      category = language === 'hi' ? 'कम वजन / हल्का कुपोषण संकेत' : 'Underweight / Mild Malnutrition Indicator';
       badgeClass = 'bg-amber-100 text-amber-800 border-amber-300';
     } else if (bmi > 22.5) {
-      category = 'Elevated BMI / Overweight Indicator';
+      category = language === 'hi' ? 'अधिक बीएमआई / अधिक वजन संकेत' : 'Elevated BMI / Overweight Indicator';
       badgeClass = 'bg-amber-100 text-amber-800 border-amber-300';
     }
 
     setResult({
       bmi,
       totalMonths,
-      gender: gender === 'M' ? 'Boy' : 'Girl',
+      gender: gender === 'M' ? (language === 'hi' ? 'बालक' : 'Boy') : (language === 'hi' ? 'बालिका' : 'Girl'),
       category,
       badgeClass,
     });
@@ -53,13 +55,13 @@ export default function GrowthCalculator({ onToast }) {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-block bg-shwf-orange-subtle text-shwf-orange-dark font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">
-            WHO Child Growth Sandbox
+            {t('calculator.badge', 'Interactive Pediatric Tool')}
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-shwf-navy tracking-tight mb-3">
-            Interactive Child Growth Calculator
+            {t('calculator.title', 'Child Growth & WHO BMI Calculator')}
           </h2>
           <p className="text-base sm:text-lg text-slate-600">
-            Enter your child's age, gender, height, and weight to preview preliminary BMI and growth parameters based on WHO standard curves.
+            {t('calculator.subtitle', 'Evaluate your child\'s growth percentiles and nutritional status instantly according to official WHO reference standards.')}
           </p>
         </div>
 
@@ -72,7 +74,7 @@ export default function GrowthCalculator({ onToast }) {
               {/* Age (Years & Months) */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  Age (Years & Months)
+                  {t('calculator.dobLabel', 'Age')} (Years & Mos)
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
@@ -99,17 +101,18 @@ export default function GrowthCalculator({ onToast }) {
               {/* Gender */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  Gender
+                  {t('calculator.genderLabel', 'Gender')}
                 </label>
                 <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
                   className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-shwf-navy"
                 >
-                  <option value="M">Male (Boy)</option>
-                  <option value="F">Female (Girl)</option>
+                  <option value="M">{t('calculator.male', 'Male (Boy)')}</option>
+                  <option value="F">{t('calculator.female', 'Female (Girl)')}</option>
                 </select>
               </div>
+
 
               {/* Height */}
               <div>

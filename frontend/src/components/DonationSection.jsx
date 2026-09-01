@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { QrCode, Copy, Check, Building2, User, CreditCard, MapPin, Phone, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function DonationSection({ onToast }) {
+  const { t } = useLanguage();
   const [copiedField, setCopiedField] = useState(null);
 
   const bankDetails = {
@@ -33,13 +35,13 @@ export default function DonationSection({ onToast }) {
         {/* Banner Headlines */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-block bg-shwf-orange-subtle text-shwf-orange-dark font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">
-            Your Contribution Shapes a Child's Future
+            {t('donate.badge', 'Support Our Mission')}
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-shwf-navy uppercase tracking-tight mb-3">
-            DONATE / SUPPORT <span className="text-shwf-green">A HEALTHY LIFE..</span>
+            {t('donate.title', 'DONATE / SUPPORT A HEALTHY LIFE')}
           </h2>
           <p className="font-serif italic text-lg sm:text-xl text-slate-700 font-medium">
-            "Let's join hands for a healthy, educated and compassionate society."
+            "{t('donate.subtitle', 'Let\'s join hands for a healthy, educated and compassionate society.')}"
           </p>
         </div>
 
@@ -51,8 +53,9 @@ export default function DonationSection({ onToast }) {
             <div className="w-full">
               {/* Header Pill */}
               <div className="bg-shwf-green-dark text-white font-extrabold text-base uppercase tracking-wider py-2.5 px-6 rounded-full shadow-md mb-6 inline-block w-full">
-                SCAN TO DONATE
+                {t('donate.qrTitle', 'SCAN TO DONATE')}
               </div>
+
 
               {/* QR Code Container */}
               <div className="bg-white border-2 border-slate-200 rounded-2xl p-3 shadow-inner inline-flex flex-col items-center justify-center mb-6 max-w-[260px] mx-auto group hover:border-shwf-green transition-all duration-300">

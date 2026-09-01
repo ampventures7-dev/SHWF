@@ -1,8 +1,11 @@
 import React from 'react';
 import { Phone, Globe, ShieldCheck, HeartHandshake, MapPin, ArrowRight } from 'lucide-react';
 import Logo from './Logo';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer id="about" className="bg-shwf-navy-dark text-white pt-16 pb-8 border-t-4 border-shwf-green">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,47 +21,47 @@ export default function Footer() {
 
             <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-xs font-bold text-slate-200 border border-white/15">
               <ShieldCheck className="w-3.5 h-3.5 text-shwf-orange" />
-              <span>Govt. Reg. No. 04/16/03/20319/24</span>
+              <span>{t('common.regNo', 'Govt. Reg. No. 04/16/03/20319/24')}</span>
             </div>
 
             <p className="text-slate-300 text-sm leading-relaxed pr-4">
-              Smart Health Welfare Foundation is a non-profit humanitarian organization dedicated to early child health diagnostics, eradicating malnutrition, and improving healthcare accessibility across Indian schools.
+              {t('footer.tagline', 'Smart Health Welfare Foundation is a non-profit humanitarian organization dedicated to early child health diagnostics, eradicating malnutrition, and improving healthcare accessibility across Indian schools.')}
             </p>
 
             <div className="font-serif italic text-sm text-[#a7f3d0]">
-              "Let's join hands for a healthy, educated and compassionate society."
+              {t('common.mantra', '"सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः" — Empowering Healthier Futures')}
             </div>
           </div>
 
           {/* Col 2: Quick Links (Span 3) */}
           <div className="lg:col-span-3 space-y-3">
             <h4 className="text-base font-bold text-white uppercase tracking-wider relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-8 after:h-0.5 after:bg-shwf-orange">
-              Quick Navigation
+              {t('footer.quickLinks', 'Quick Navigation')}
             </h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <a href="#home" className="hover:text-shwf-orange transition-colors flex items-center gap-1.5">
-                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> Home
+                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> {t('nav.home', 'Home')}
                 </a>
               </li>
               <li>
                 <a href="#donate" className="hover:text-shwf-orange transition-colors flex items-center gap-1.5">
-                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> Scan & Donate
+                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> {t('nav.donate', 'Scan & Donate')}
                 </a>
               </li>
               <li>
                 <a href="#portal" className="hover:text-shwf-orange transition-colors flex items-center gap-1.5">
-                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> Student Health Portal
+                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> {t('nav.portal', 'Student Health Portal')}
                 </a>
               </li>
               <li>
                 <a href="#calculator" className="hover:text-shwf-orange transition-colors flex items-center gap-1.5">
-                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> WHO Growth Calculator
+                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> {t('nav.calculator', 'WHO Growth Calculator')}
                 </a>
               </li>
               <li>
                 <a href="#pillars" className="hover:text-shwf-orange transition-colors flex items-center gap-1.5">
-                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> Core Impact Pillars
+                  <ArrowRight className="w-3.5 h-3.5 text-shwf-green" /> {t('nav.pillars', 'Core Impact Pillars')}
                 </a>
               </li>
             </ul>
@@ -69,6 +72,7 @@ export default function Footer() {
             <h4 className="text-base font-bold text-white uppercase tracking-wider relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-8 after:h-0.5 after:bg-shwf-orange">
               Contact & Donations
             </h4>
+
 
             <div className="space-y-3 text-sm text-slate-300">
               <div className="flex items-start gap-2.5">

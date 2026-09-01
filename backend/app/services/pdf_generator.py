@@ -33,10 +33,11 @@ def prepare_template_context(
     report_data: PredictionReportResponse,
     student_info: Dict[str, Any],
     extra_data: Optional[Dict[str, Any]] = None,
+    lang: str = "en",
 ) -> Dict[str, Any]:
     """
     Format, normalize, and map all report card data and dynamic flags from
-    Phase 3 risk analysis into the Jinja2 template context.
+    Phase 3 risk analysis into the Jinja2 template context with optional Hindi localization.
     """
     extra = extra_data or {}
     general_exam = extra.get("general_exam", {})
@@ -49,6 +50,8 @@ def prepare_template_context(
     lifestyle_info = extra.get("lifestyle", {})
     pathology_info = extra.get("pathology", {})
     student_meta = extra.get("student_meta", {})
+
+    is_hindi = (lang == "hi")
 
     # Extract risk names and severities
     risk_names = [r.risk_name for r in report_data.risks]
@@ -74,7 +77,7 @@ def prepare_template_context(
         "weight_gain": diet_weight_gain,
         "weight_management": diet_weight_management,
         "others": diet_others,
-        "others_text": "Balanced Maintenance Nutrition" if diet_others else "N/A",
+        "others_text": ("संतुलित दैनिक पोषण" if is_hindi else "Balanced Maintenance Nutrition") if diet_others else "N/A",
     }
 
     # Map Overall Health Status based on highest severity
@@ -99,20 +102,27 @@ def prepare_template_context(
     if not advice_lines and report_data.diet_plan.recommendations:
         advice_lines = report_data.diet_plan.recommendations[:2]
 
-    advice_line1 = advice_lines[0] if len(advice_lines) > 0 else "Maintain daily balanced diet with dairy, pulses, and vegetables."
-    advice_line2 = advice_lines[1] if len(advice_lines) > 1 else "Continue routine physical activities and regular health follow-up."
+    if is_hindi:
+        advice_line1 = advice_lines[0] if len(advice_lines) > 0 else "दैनिक आहार में दूध, हरी सब्जियां, दालें और मौसमी फल शामिल करें।"
+        advice_line2 = advice_lines[1] if len(advice_lines) > 1 else "नियमित शारीरिक व्यायाम करें एवं स्वच्छ जल का पर्याप्त सेवन करें।"
+    else:
+        advice_line1 = advice_lines[0] if len(advice_lines) > 0 else "Maintain daily balanced diet with dairy, pulses, and vegetables."
+        advice_line2 = advice_lines[1] if len(advice_lines) > 1 else "Continue routine physical activities and regular health follow-up."
 
     # Format student data
     age_yrs = report_data.vitals.age_months // 12
     age_mos = report_data.vitals.age_months % 12
-    age_display = f"{age_yrs} Yrs {age_mos} M" if age_yrs > 0 else f"{age_mos} Months"
+    if is_hindi:
+        age_display = f"{age_yrs} वर्ष {age_mos} माह" if age_yrs > 0 else f"{age_mos} माह"
+    else:
+        age_display = f"{age_yrs} Yrs {age_mos} M" if age_yrs > 0 else f"{age_mos} Months"
 
     merged_student = {
         "school_name": report_data.school_name or student_info.get("schools", {}).get("name") if isinstance(student_info.get("schools"), dict) else student_info.get("school_name", "N/A"),
         "full_name": report_data.full_name or student_info.get("full_name", "N/A"),
         "student_id": report_data.student_id or student_info.get("student_id", "N/A"),
         "date_of_birth": student_info.get("date_of_birth", "N/A"),
-        "gender": report_data.vitals.gender or student_info.get("gender", "M"),
+        "gender": ("बालक" if report_data.vitals.gender == "M" else "बालिका") if is_hindi else (report_data.vitals.gender or student_info.get("gender", "M")),
         "father_name": student_meta.get("father_name") or student_info.get("parent_name", "N/A"),
         "mother_name": student_meta.get("mother_name", "N/A"),
         "class_name": student_meta.get("class_name", "N/A"),
@@ -133,10 +143,12 @@ def prepare_template_context(
         status_flags.update(extra.get("status_flags"))
 
     doctor_info = extra.get("doctor_info", {})
-    doctor_name = doctor_info.get("doctor_name") or "Dr. A. Sharma (MBBS, DCH)"
+    doctor_name = doctor_info.get("doctor_name") or ("डॉ. ए. शर्मा (एमबीबीएस, डीसीएच)" if is_hindi else "Dr. A. Sharma (MBBS, DCH)")
     exam_date = doctor_info.get("exam_date") or recorded_date
 
     return {
+        "lang": lang,
+        "is_hindi": is_hindi,
         "student": merged_student,
         "vitals": report_data.vitals.model_dump(),
         "zscores": report_data.zscores.model_dump(),
@@ -156,9 +168,9 @@ def prepare_template_context(
         "status_flags": status_flags,
         "dietitian_advice_line1": extra.get("dietitian_advice_line1") or advice_line1,
         "dietitian_advice_line2": extra.get("dietitian_advice_line2") or advice_line2,
-        "doctor_remarks": report_data.vitals.doctor_remarks or "No active specialist referral required at this stage.",
-        "clinical_opinion_line1": extra.get("clinical_opinion_line1") or "Overall physical growth parameters and nutritional vitals evaluated against WHO standards.",
-        "clinical_opinion_line2": extra.get("clinical_opinion_line2") or "Adhere to the recommended dietary modifications and hydration guidelines.",
+        "doctor_remarks": report_data.vitals.doctor_remarks or ("वर्तमान में विशेषज्ञ परामर्श की आवश्यकता नहीं है।" if is_hindi else "No active specialist referral required at this stage."),
+        "clinical_opinion_line1": extra.get("clinical_opinion_line1") or ("विश्व स्वास्थ्य संगठन (WHO) मानकों के अनुसार शारीरिक वृद्धि एवं पोषण का मूल्यांकन किया गया।" if is_hindi else "Overall physical growth parameters and nutritional vitals evaluated against WHO standards."),
+        "clinical_opinion_line2": extra.get("clinical_opinion_line2") or ("संतुलित आहार एवं नियमित स्वास्थ्य निगरानी का पालन करें।" if is_hindi else "Adhere to the recommended dietary modifications and hydration guidelines."),
         "doctor_name": doctor_name,
         "recorded_date": exam_date,
     }
@@ -168,12 +180,13 @@ def render_report_html(
     report_data: PredictionReportResponse,
     student_info: Dict[str, Any],
     extra_data: Optional[Dict[str, Any]] = None,
+    lang: str = "en",
 ) -> str:
     """Render the Jinja2 HTML report template with student and clinical data."""
     try:
         env = get_jinja_env()
         template = env.get_template("report_card.html")
-        context = prepare_template_context(report_data, student_info, extra_data)
+        context = prepare_template_context(report_data, student_info, extra_data, lang=lang)
         return template.render(**context)
     except Exception as e:
         logger.error(f"Error rendering report card template: {str(e)}")
@@ -184,12 +197,13 @@ async def generate_report_pdf_async(
     report_data: PredictionReportResponse,
     student_info: Dict[str, Any],
     extra_data: Optional[Dict[str, Any]] = None,
+    lang: str = "en",
 ) -> bytes:
     """
     Asynchronously generate in-memory PDF report card bytes via Playwright Chromium.
     Does NOT write files to local disk, ensuring stateless serverless execution.
     """
-    html_content = render_report_html(report_data, student_info, extra_data)
+    html_content = render_report_html(report_data, student_info, extra_data, lang=lang)
 
     try:
         async with async_playwright() as p:
@@ -212,18 +226,19 @@ async def generate_report_pdf_async(
 
     # Fallback to sync playwright in executor thread
     import asyncio
-    return await asyncio.to_thread(generate_report_pdf, report_data, student_info, extra_data)
+    return await asyncio.to_thread(generate_report_pdf, report_data, student_info, extra_data, lang)
 
 
 def generate_report_pdf(
     report_data: PredictionReportResponse,
     student_info: Dict[str, Any],
     extra_data: Optional[Dict[str, Any]] = None,
+    lang: str = "en",
 ) -> bytes:
     """
     Synchronous interface for Playwright in-memory PDF report card generation.
     """
-    html_content = render_report_html(report_data, student_info, extra_data)
+    html_content = render_report_html(report_data, student_info, extra_data, lang=lang)
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
@@ -239,3 +254,4 @@ def generate_report_pdf(
         )
         browser.close()
         return pdf_bytes
+

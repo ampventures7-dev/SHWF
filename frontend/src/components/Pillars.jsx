@@ -1,34 +1,37 @@
 import React from 'react';
 import { HeartPulse, Utensils, Activity, Sparkles, Stethoscope, Award, Users2, Compass } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Pillars() {
+  const { t } = useLanguage();
+
   const pillars = [
     {
       icon: Stethoscope,
       color: 'navy',
-      title: 'School Health Camps',
-      desc: 'Annual on-campus clinical screenings by certified medical doctors, capturing vital signs, dental hygiene, vision acuity, and systemic pediatric wellness.',
+      title: t('pillars.p1Title', '1. Comprehensive Screenings'),
+      desc: t('pillars.p1Desc', 'Annual on-campus clinical screenings by certified medical doctors, capturing vital signs, dental hygiene, vision acuity, and systemic pediatric wellness.'),
       badge: 'Pediatric Care'
     },
     {
       icon: Activity,
       color: 'green',
-      title: 'WHO Growth Analytics',
-      desc: 'Scientific calculation of exact WHO LMS Z-scores (HAZ, WAZ, BAZ) to reliably flag malnutrition, stunting, wasting, and severe underweight risk in children.',
+      title: t('pillars.p2Title', '2. WHO AI Growth Analytics'),
+      desc: t('pillars.p2Desc', 'Scientific calculation of exact WHO LMS Z-scores (HAZ, WAZ, BAZ) to reliably flag malnutrition, stunting, wasting, and severe underweight risk in children.'),
       badge: 'Scientific Precision'
     },
     {
       icon: Utensils,
       color: 'orange',
-      title: 'Custom Nutrition Plans',
-      desc: 'Personalized meal regimens utilizing affordable, high-nutrition regional Indian ingredients (sprouts, pulses, millets, dairy) to restore healthy growth.',
+      title: t('pillars.p3Title', '3. Regional Nutrition & Diets'),
+      desc: t('pillars.p3Desc', 'Personalized meal regimens utilizing affordable, high-nutrition regional Indian ingredients (sprouts, pulses, millets, dairy) to restore healthy growth.'),
       badge: 'Zero Malnutrition'
     },
     {
       icon: Compass,
       color: 'gold',
-      title: 'Rural Health Outreach',
-      desc: 'Extending preventive healthcare and health literacy to remote rural schools and underprivileged student communities across India.',
+      title: t('pillars.p4Title', '4. Direct Parent Empowerment'),
+      desc: t('pillars.p4Desc', 'Zero-barrier digital access for parents via phone OTP and instant PDF report cards to make healthcare transparent and actionable.'),
       badge: 'Community Reach'
     }
   ];
@@ -40,13 +43,13 @@ export default function Pillars() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-block bg-shwf-green-subtle text-shwf-green-dark font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">
-            Pillars of Transformation
+            {t('pillars.badge', 'Core Healthcare Pillars')}
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-shwf-navy tracking-tight mb-4">
-            Committed to Holistic Child Wellness & Health Literacy
+            {t('pillars.title', 'Transforming Child Health in India')}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-            Our multi-pronged approach combines clinical expertise, algorithmic growth tracking, and grassroots nutritional interventions.
+            {t('pillars.subtitle', 'Our multi-dimensional approach ensures comprehensive diagnostic coverage, early medical intervention, and sustained nutritional wellness.')}
           </p>
         </div>
 
@@ -98,5 +101,6 @@ export default function Pillars() {
 
       </div>
     </section>
+
   );
 }

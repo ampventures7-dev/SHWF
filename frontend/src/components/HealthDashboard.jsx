@@ -5,8 +5,10 @@ import {
   FileText, Clock, ArrowUpRight, Scale, Ruler, Eye, Stethoscope, ChevronRight 
 } from 'lucide-react';
 import { API } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function HealthDashboard({ student, token, onBack, onToast }) {
+  const { language, t } = useLanguage();
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -40,10 +42,10 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
 
   const handleDownloadPdf = async () => {
     setDownloading(true);
-    if (onToast) onToast('Generating certified high-definition PDF report card...', 'info');
+    if (onToast) onToast(t('dashboard.generatingPdf', 'Generating certified high-definition PDF report card...'), 'info');
     try {
-      const campParam = selectedCampId ? `?camp_record_id=${encodeURIComponent(selectedCampId)}` : '';
-      const downloadUrl = `/reports/download/${student.student_id}${campParam}`;
+      const campParam = selectedCampId ? `&camp_record_id=${encodeURIComponent(selectedCampId)}` : '';
+      const downloadUrl = `/reports/download/${student.student_id}?lang=${language}${campParam}`;
       
       const res = await fetch(downloadUrl, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -54,7 +56,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
         const blobUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = blobUrl;
-        a.download = `SHWF_Health_Report_${student.student_id}.pdf`;
+        a.download = `SHWF_Health_Report_${student.student_id}_${language}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(blobUrl);
@@ -65,7 +67,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
       }
     } catch (err) {
       console.error(err);
-      window.open(`/reports/download/${student.student_id}`, '_blank');
+      window.open(`/reports/download/${student.student_id}?lang=${language}`, '_blank');
       if (onToast) onToast('PDF report opened in new tab', 'info');
     } finally {
       setDownloading(false);
@@ -77,7 +79,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
       <div className="py-20 text-center">
         <div className="inline-flex flex-col items-center p-10 bg-white rounded-3xl border border-slate-200 shadow-xl max-w-md w-full">
           <Loader2 className="w-10 h-10 text-shwf-navy animate-spin mb-4" />
-          <h4 className="text-lg font-bold text-shwf-navy mb-1">Analyzing Pediatric Vitals...</h4>
+          <h4 className="text-lg font-bold text-shwf-navy mb-1">{t('common.loading', 'Analyzing Pediatric Vitals...')}</h4>
           <p className="text-xs text-slate-500">Calculating exact WHO LMS Z-scores and multi-session growth trajectory.</p>
         </div>
       </div>
@@ -94,24 +96,24 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
   const growthComp = report?.growth_comparison;
 
   const getHazBadge = (z) => {
-    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">Severe Stunting</span>;
-    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Stunting Risk</span>;
-    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Normal Height</span>;
+    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">{t('dashboard.stuntingRisk', 'Severe Stunting')}</span>;
+    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">{t('dashboard.stuntingRisk', 'Stunting Risk')}</span>;
+    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">{t('dashboard.normal', 'Normal Height')}</span>;
   };
 
   const getWazBadge = (z) => {
     if (z === null || z === undefined) return <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold">N/A (&gt;10 Yrs)</span>;
-    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">Severe Underweight</span>;
-    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Underweight Risk</span>;
-    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Normal Weight</span>;
+    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">{t('dashboard.underweightRisk', 'Severe Underweight')}</span>;
+    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">{t('dashboard.underweightRisk', 'Underweight Risk')}</span>;
+    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">{t('dashboard.normal', 'Normal Weight')}</span>;
   };
 
   const getBazBadge = (z) => {
-    if (z > 3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">Obesity Indicator</span>;
-    if (z > 2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Overweight Risk</span>;
-    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">Severe Thinness</span>;
-    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Thinness Risk</span>;
-    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Healthy BMI</span>;
+    if (z > 3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">{t('dashboard.overweightRisk', 'Obesity Indicator')}</span>;
+    if (z > 2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">{t('dashboard.overweightRisk', 'Overweight Risk')}</span>;
+    if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">{t('dashboard.thinnessRisk', 'Severe Thinness')}</span>;
+    if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">{t('dashboard.thinnessRisk', 'Thinness Risk')}</span>;
+    return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">{t('dashboard.normal', 'Healthy BMI')}</span>;
   };
 
   const ageYears = Math.floor((vitals.age_months || 120) / 12);
@@ -128,7 +130,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             className="inline-flex items-center gap-2 text-xs font-bold text-shwf-navy hover:text-shwf-orange transition-colors bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Search Another Student</span>
+            <span>{t('portal.title', 'Search Another Student')}</span>
           </button>
 
           {/* Historical Camp Selector Dropdown / Pills */}
@@ -136,7 +138,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-shwf-orange" />
-                Select Camp Visit:
+                {t('dashboard.switchCamp', 'Select Camp Visit')}:
               </span>
               <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
                 {campHistory.map((camp, idx) => {
@@ -154,7 +156,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
                       <span>{camp.recorded_at}</span>
                       {idx === 0 && (
                         <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-800'}`}>
-                          Latest
+                          {t('dashboard.latestVisit', 'Latest')}
                         </span>
                       )}
                     </button>
@@ -176,18 +178,18 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             <div>
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="bg-white/20 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
-                  ID: {report?.student_id || student?.student_id}
+                  {t('dashboard.studentId', 'ID')}: {report?.student_id || student?.student_id}
                 </span>
                 <span className="bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                  Verified Record &bull; Camp: {vitals.recorded_at ? vitals.recorded_at.substring(0, 10) : '2026-08-15'}
+                  {t('dashboard.badge', 'Verified Record')} &bull; Camp: {vitals.recorded_at ? vitals.recorded_at.substring(0, 10) : '2026-08-15'}
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-white">
                 {report?.full_name || student?.full_name}
               </h2>
               <p className="text-xs sm:text-sm text-slate-200 mt-1">
-                School: <strong className="text-white">{report?.school_name || student?.school_name || 'Partner School'}</strong> &bull; Age: <strong className="text-white">{ageYears} Yrs {ageMonths} M</strong> &bull; Gender: <strong className="text-white">{vitals.gender === 'M' ? 'Male' : 'Female'}</strong>
+                {t('dashboard.school', 'School')}: <strong className="text-white">{report?.school_name || student?.school_name || 'Partner School'}</strong> &bull; {t('dashboard.ageAtExam', 'Age')}: <strong className="text-white">{ageYears} Yrs {ageMonths} M</strong> &bull; {t('dashboard.gender', 'Gender')}: <strong className="text-white">{vitals.gender === 'M' ? (language === 'hi' ? 'बालक' : 'Male') : (language === 'hi' ? 'बालिका' : 'Female')}</strong>
               </p>
             </div>
           </div>
@@ -200,12 +202,12 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             {downloading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Generating Certified PDF...</span>
+                <span>{t('dashboard.generatingPdf', 'Generating Certified PDF...')}</span>
               </>
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                <span>Download Certified PDF Report</span>
+                <span>{t('dashboard.downloadPdf', 'Download Certified PDF Report')}</span>
               </>
             )}
           </button>
@@ -223,7 +225,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                    Physical Growth & Development Comparison
+                    {t('dashboard.growthComparisonTitle', 'Physical Growth & Development Comparison')}
                     <span className="bg-emerald-100 text-emerald-800 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
                       Past {growthComp.months_elapsed} Months Interval
                     </span>
@@ -243,7 +245,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2 text-xs font-black text-slate-700 uppercase tracking-wider">
                     <Ruler className="w-4 h-4 text-emerald-600" />
-                    Height Growth
+                    {t('dashboard.heightGrowth', 'Height Growth')}
                   </div>
                   <span className={`text-xs font-black px-2.5 py-1 rounded-full ${
                     growthComp.height_change_cm >= 0 
@@ -267,7 +269,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2 text-xs font-black text-slate-700 uppercase tracking-wider">
                     <Scale className="w-4 h-4 text-blue-600" />
-                    Weight Progression
+                    {t('dashboard.weightProgress', 'Weight Progression')}
                   </div>
                   <span className={`text-xs font-black px-2.5 py-1 rounded-full ${
                     growthComp.weight_change_kg >= 0 
@@ -291,7 +293,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2 text-xs font-black text-slate-700 uppercase tracking-wider">
                     <Activity className="w-4 h-4 text-purple-600" />
-                    BMI Evolution
+                    {t('dashboard.bmiEvolution', 'BMI Evolution')}
                   </div>
                   <span className="text-xs font-black px-2.5 py-1 rounded-full bg-purple-100 text-purple-800">
                     {growthComp.bmi_change >= 0 ? `+${growthComp.bmi_change}` : growthComp.bmi_change} kg/m²
@@ -302,7 +304,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
                 </div>
                 <div className="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
                   <CheckCircle2 className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
-                  <span>WHO BMI Category: {getBazBadge(bazVal)}</span>
+                  <span>WHO BMI: {getBazBadge(bazVal)}</span>
                 </div>
               </div>
 
@@ -312,7 +314,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             <div className="bg-emerald-900/5 border border-emerald-200/80 rounded-2xl p-4 text-xs text-slate-800 flex items-start gap-3">
               <Sparkles className="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" />
               <div className="leading-relaxed">
-                <strong>Pediatric Growth Interpretation: </strong>
+                <strong>{t('dashboard.clinicalGrowthSummary', 'Pediatric Growth Interpretation')}: </strong>
                 {growthComp.growth_assessment_summary}
               </div>
             </div>
@@ -325,7 +327,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
           {/* Card 1: Height for Age */}
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md">
             <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
-              Height-for-Age (HAZ)
+              {t('dashboard.hazTitle', 'Height-for-Age (HAZ)')}
             </div>
             <div className="text-3xl font-black text-shwf-navy mb-1">
               {vitals.height_cm} <span className="text-base font-semibold text-slate-500">cm</span>
@@ -339,7 +341,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
           {/* Card 2: Weight for Age */}
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md">
             <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
-              Weight-for-Age (WAZ)
+              {t('dashboard.wazTitle', 'Weight-for-Age (WAZ)')}
             </div>
             <div className="text-3xl font-black text-shwf-green mb-1">
               {vitals.weight_kg} <span className="text-base font-semibold text-slate-500">kg</span>
@@ -353,7 +355,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
           {/* Card 3: BMI for Age */}
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md">
             <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
-              BMI-for-Age (BAZ)
+              {t('dashboard.bazTitle', 'BMI-for-Age (BAZ)')}
             </div>
             <div className="text-3xl font-black text-shwf-orange mb-1">
               {vitals.bmi} <span className="text-base font-semibold text-slate-500">kg/m²</span>
@@ -374,10 +376,10 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-shwf-navy">
-                Personalized Indian Dietitian Guidance
+                {t('dashboard.dietTitle', 'Personalized Indian Dietitian Guidance')}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Tailored for child's current metabolic needs based on recent anthropometric examination.
+                {t('dashboard.dietSummary', 'Tailored for child\'s current metabolic needs based on recent anthropometric examination.')}
               </p>
             </div>
           </div>
@@ -385,7 +387,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
             <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-shwf-green">
               <span className="text-[11px] font-extrabold text-shwf-green uppercase tracking-wider block mb-1">
-                Breakfast
+                {language === 'hi' ? 'सुबह का नाश्ता (Breakfast)' : 'Breakfast'}
               </span>
               <p className="text-slate-700 leading-relaxed text-xs">
                 {diet.breakfast || 'Nutrient-rich poha with peanuts, boiled egg or sprouts, and warm milk.'}
@@ -394,7 +396,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
 
             <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-shwf-navy">
               <span className="text-[11px] font-extrabold text-shwf-navy uppercase tracking-wider block mb-1">
-                Lunch
+                {language === 'hi' ? 'दोपहर का भोजन (Lunch)' : 'Lunch'}
               </span>
               <p className="text-slate-700 leading-relaxed text-xs">
                 {diet.lunch || 'Yellow dal, seasonal green vegetables (palak/methi), 2 chapatis, and fresh curd.'}
@@ -403,7 +405,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
 
             <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-shwf-orange">
               <span className="text-[11px] font-extrabold text-shwf-orange uppercase tracking-wider block mb-1">
-                Dinner
+                {language === 'hi' ? 'रात का खाना (Dinner)' : 'Dinner'}
               </span>
               <p className="text-slate-700 leading-relaxed text-xs">
                 {diet.dinner || 'Light khichdi with ghee, paneer preparation, and fresh cucumber salad.'}
@@ -418,7 +420,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <Clock className="w-5 h-5 text-shwf-navy" />
               <h4 className="text-base font-black text-slate-900">
-                Complete Health Check-Up Timeline ({campHistory.length} Sessions Recorded)
+                {t('dashboard.timelineTitle', 'Complete Health Check-Up Timeline')} ({campHistory.length} {t('dashboard.timelineSubtitle', 'Sessions Recorded')})
               </h4>
             </div>
 
@@ -426,13 +428,13 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="bg-slate-50 text-slate-600 font-extrabold border-b border-slate-200">
-                    <th className="p-3">Camp Date</th>
-                    <th className="p-3">Height (cm)</th>
-                    <th className="p-3">Weight (kg)</th>
-                    <th className="p-3">BMI</th>
-                    <th className="p-3">HAZ (Height Z-Score)</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3 text-right">Action</th>
+                    <th className="p-3">{t('dashboard.tableDate', 'Camp Date')}</th>
+                    <th className="p-3">{t('dashboard.tableHeight', 'Height (cm)')}</th>
+                    <th className="p-3">{t('dashboard.tableWeight', 'Weight (kg)')}</th>
+                    <th className="p-3">{t('dashboard.tableBmi', 'BMI')}</th>
+                    <th className="p-3">{t('dashboard.tableHaz', 'HAZ (Height Z-Score)')}</th>
+                    <th className="p-3">{t('dashboard.tableStatus', 'Status')}</th>
+                    <th className="p-3 text-right">{t('dashboard.tableAction', 'Action')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
@@ -441,7 +443,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
                     return (
                       <tr key={c.camp_id || i} className={isCurrent ? 'bg-emerald-50/50 font-bold' : 'hover:bg-slate-50'}>
                         <td className="p-3 text-slate-900 font-bold">
-                          {c.recorded_at} {i === 0 && <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full ml-1 font-bold">Latest</span>}
+                          {c.recorded_at} {i === 0 && <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full ml-1 font-bold">{t('dashboard.latestVisit', 'Latest')}</span>}
                         </td>
                         <td className="p-3">{c.height_cm} cm</td>
                         <td className="p-3">{c.weight_kg} kg</td>
@@ -461,7 +463,7 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
                                 : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
                             }`}
                           >
-                            {isCurrent ? 'Active View' : 'View Report'}
+                            {isCurrent ? t('dashboard.activeVisitBadge', 'Active View') : t('dashboard.viewVisit', 'View Report')}
                           </button>
                         </td>
                       </tr>
@@ -477,4 +479,5 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
     </section>
   );
 }
+
 

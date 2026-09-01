@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Search, School, MapPin, Building, Lock, Loader2, UserCheck, AlertCircle } from 'lucide-react';
 import { API } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function StudentPortal({ onSelectStudent, onToast }) {
+  const { t } = useLanguage();
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [schools, setSchools] = useState([]);
@@ -104,13 +106,13 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-block bg-shwf-navy-subtle text-shwf-navy font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">
-            Parent & Student Access
+            {t('portal.badge', 'Parent & Student Access')}
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-shwf-navy tracking-tight mb-3">
-            Digital Health Report Card Portal
+            {t('portal.title', 'Digital Health Report Card Portal')}
           </h2>
           <p className="text-base sm:text-lg text-slate-600">
-            Select your child's school and enter their name to retrieve certified WHO growth report cards via secure parent OTP authentication.
+            {t('portal.subtitle', 'Select your child\'s school and enter their name to retrieve certified WHO growth report cards via secure parent OTP authentication.')}
           </p>
         </div>
 
@@ -126,7 +128,7 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 text-shwf-navy" />
-                    1. Select State
+                    {t('portal.step1', '1. Select State')}
                   </span>
                   {states.length > 0 && (
                     <span className="text-[10px] text-shwf-navy bg-shwf-navy-subtle px-2 py-0.5 rounded-full font-bold">
@@ -139,7 +141,7 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                   onChange={handleStateChange}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-shwf-navy focus:bg-white transition-all"
                 >
-                  <option value="">-- Choose State --</option>
+                  <option value="">{t('portal.selectStatePlaceholder', '-- Choose State --')}</option>
                   {states.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name} {s.type === 'Union Territory' ? '(UT)' : ''}
@@ -153,7 +155,7 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Building className="w-3.5 h-3.5 text-shwf-green" />
-                    2. Select District
+                    {t('portal.step2', '2. Select District')}
                   </span>
                   {districts.length > 0 && (
                     <span className="text-[10px] text-shwf-green bg-green-50 px-2 py-0.5 rounded-full font-bold">
@@ -171,8 +173,8 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                     {loadingDistricts
                       ? 'Loading Districts...'
                       : districts.length > 0
-                      ? `-- Choose District (${districts.length} Districts) --`
-                      : '-- Choose District --'}
+                      ? `-- ${t('portal.selectDistrictPlaceholder', 'Choose District')} (${districts.length} Districts) --`
+                      : t('portal.selectDistrictPlaceholder', '-- Choose District --')}
                   </option>
                   {districts.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -187,7 +189,7 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <School className="w-3.5 h-3.5 text-shwf-orange" />
-                    3. Select School
+                    {t('portal.step3', '3. Select School')}
                   </span>
                   {schools.length > 0 && (
                     <span className="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-bold">
@@ -205,8 +207,8 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                     {loadingSchools
                       ? 'Loading Schools...'
                       : schools.length > 0
-                      ? `-- Choose School (${schools.length} Available) --`
-                      : '-- Choose School --'}
+                      ? `-- ${t('portal.selectSchoolPlaceholder', 'Choose School')} (${schools.length} Available) --`
+                      : t('portal.selectSchoolPlaceholder', '-- Choose School --')}
                   </option>
                   {schools.map((sc) => (
                     <option key={sc.id} value={sc.id}>
@@ -223,7 +225,7 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
               <div className="relative flex-grow">
                 <input
                   type="text"
-                  placeholder="Enter Student Name (e.g. Aarav, Priya) or leave blank for all..."
+                  placeholder={t('portal.searchStudentPlaceholder', 'Enter Student Name or leave blank for all...')}
                   value={nameQuery}
                   onChange={(e) => setNameQuery(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-11 pr-4 py-3.5 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-shwf-navy focus:bg-white transition-all"
@@ -239,12 +241,12 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                 {searching ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Searching...</span>
+                    <span>{t('portal.searching', 'Searching...')}</span>
                   </>
                 ) : (
                   <>
                     <Search className="w-4 h-4" />
-                    <span>Search Records</span>
+                    <span>{t('portal.step4', 'Search Records')}</span>
                   </>
                 )}
               </button>
@@ -259,23 +261,22 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                   <UserCheck className="w-4 h-4 text-shwf-green" />
                   <span>Matching Student Records ({students.length})</span>
                 </h4>
-                <span className="text-xs text-slate-500">Showing non-sensitive public index</span>
+                <span className="text-xs text-slate-500">{t('portal.privacyNotice', 'Showing non-sensitive public index')}</span>
               </div>
 
               {students.length === 0 ? (
                 <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-slate-500">
                   <AlertCircle className="w-8 h-8 mx-auto mb-2 text-slate-400" />
-                  <p className="text-sm font-semibold">No students found matching your query in this school.</p>
-                  <p className="text-xs mt-1">Please try checking the spelling or leaving the name field blank.</p>
+                  <p className="text-sm font-semibold">{t('portal.noStudentsFound', 'No students found matching your query.')}</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-slate-200">
                   <table className="w-full text-left text-sm text-slate-700">
                     <thead className="bg-shwf-navy-subtle text-shwf-navy text-xs font-bold uppercase tracking-wider">
                       <tr>
-                        <th className="py-3.5 px-4">Student ID</th>
-                        <th className="py-3.5 px-4">Full Name</th>
-                        <th className="py-3.5 px-4">School</th>
+                        <th className="py-3.5 px-4">{t('portal.studentId', 'Student ID')}</th>
+                        <th className="py-3.5 px-4">{t('dashboard.studentName', 'Full Name')}</th>
+                        <th className="py-3.5 px-4">{t('dashboard.school', 'School')}</th>
                         <th className="py-3.5 px-4 text-right">Action</th>
                       </tr>
                     </thead>
@@ -291,7 +292,7 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
                               className="inline-flex items-center gap-1.5 bg-shwf-navy hover:bg-shwf-navy-light text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm hover:shadow transition-all"
                             >
                               <Lock className="w-3.5 h-3.5 text-shwf-orange-light" />
-                              <span>View Health Report</span>
+                              <span>{t('portal.viewHealthCard', 'View Health Report')}</span>
                             </button>
                           </td>
                         </tr>
@@ -309,3 +310,4 @@ export default function StudentPortal({ onSelectStudent, onToast }) {
     </section>
   );
 }
+

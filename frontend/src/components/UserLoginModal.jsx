@@ -13,6 +13,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { API } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function UserLoginModal({
   isOpen,
@@ -20,6 +21,7 @@ export default function UserLoginModal({
   onOtpRequested,
   onToast,
 }) {
+  const { t } = useLanguage();
   const [studentId, setStudentId] = useState('STD-2026-001');
   const [contactChannel, setContactChannel] = useState('phone'); // 'phone' | 'whatsapp' | 'email'
   const [contactValue, setContactValue] = useState('+919876543210');
@@ -109,13 +111,13 @@ export default function UserLoginModal({
           </div>
           <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-[11px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full mb-2 border border-emerald-200">
             <ShieldCheck className="w-3 h-3 text-emerald-600" />
-            <span>Secure Parent Login</span>
+            <span>{t('userLogin.title', 'Parent Direct Sign-In')}</span>
           </div>
           <h3 className="text-2xl font-black text-shwf-navy tracking-tight">
-            Parent & Student Sign-In
+            {t('userLogin.title', 'Parent Direct Sign-In')}
           </h3>
           <p className="text-xs text-slate-500 mt-1">
-            Access your child's certified WHO health report card, ML nutritional insights & digital health records.
+            {t('userLogin.subtitle', 'Enter your child\'s Student ID and registered Mobile / Email to receive an OTP.')}
           </p>
         </div>
 
@@ -175,7 +177,7 @@ export default function UserLoginModal({
           {/* Student ID */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Student ID / Roll Number *
+              {t('userLogin.studentIdLabel', 'Student ID / Roll No')} *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -210,11 +212,7 @@ export default function UserLoginModal({
           {/* Contact Input */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              {contactChannel === 'email'
-                ? 'Registered Parent Email Address *'
-                : contactChannel === 'whatsapp'
-                ? 'Registered Parent WhatsApp Number *'
-                : 'Registered Parent Mobile Number *'}
+              {t('userLogin.contactLabel', 'Registered Mobile Number or Email')} *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -241,7 +239,7 @@ export default function UserLoginModal({
             </div>
             <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
               <HelpCircle className="w-3 h-3 text-slate-400" />
-              <span>We will dispatch a secure 6-digit OTP to this contact.</span>
+              <span>{t('userLogin.helpText', 'If you do not know your child\'s Student ID, use the search portal above.')}</span>
             </p>
           </div>
 
@@ -254,12 +252,12 @@ export default function UserLoginModal({
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Sending OTP Code...</span>
+                <span>{t('userLogin.sendingOtp', 'Dispatching OTP...')}</span>
               </>
             ) : (
               <>
                 <KeyRound className="w-4 h-4" />
-                <span>Send 6-Digit OTP Code</span>
+                <span>{t('userLogin.requestOtpBtn', 'Send Verification OTP')}</span>
               </>
             )}
           </button>
@@ -267,10 +265,11 @@ export default function UserLoginModal({
 
         {/* Security Note */}
         <p className="text-[11px] text-center text-slate-400 mt-4">
-          Anti-enumeration zero-knowledge verification powered by MSG91 & Bcrypt.
+          {t('portal.privacyNotice', 'Anti-enumeration zero-knowledge verification powered by MSG91 & Bcrypt.')}
         </p>
 
       </div>
     </div>
   );
 }
+

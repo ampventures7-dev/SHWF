@@ -425,7 +425,7 @@ async def generate_pdf_report_card(
 @router.get(
     "/download/{student_id}",
     summary="Download Generated PDF Report Card Directly",
-    description="Direct binary PDF stream for parent report card download.",
+    description="Direct binary PDF stream for parent report card download with English/Hindi language support.",
     responses={
         200: {
             "content": {"application/pdf": {}},
@@ -436,9 +436,10 @@ async def generate_pdf_report_card(
 async def download_student_report_pdf_parent(
     student_id: str,
     camp_record_id: Optional[str] = None,
+    lang: str = "en",
     db_service: DatabaseService = Depends(get_db_service),
 ):
-    """Direct PDF streaming endpoint for parents."""
+    """Direct PDF streaming endpoint for parents with optional Hindi (lang='hi') localization."""
     try:
         report_data, student_info, camp_extra_data = await build_student_prediction_data(
             student_id, db_service, selected_camp_id=camp_record_id
@@ -485,13 +486,16 @@ async def download_student_report_pdf_parent(
         report_data=report_data,
         student_info=student_info,
         extra_data=camp_extra_data,
+        lang=lang,
     )
 
+    filename_lang = f"_{lang}" if lang == "hi" else ""
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f'inline; filename="health_report_{student_id}.pdf"'
+            "Content-Disposition": f'inline; filename="health_report_{student_id}{filename_lang}.pdf"'
         },
     )
+
 
