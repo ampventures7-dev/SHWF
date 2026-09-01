@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Download, ArrowLeft, Activity, HeartPulse, Sparkles, CheckCircle2, 
   AlertTriangle, ShieldAlert, Loader2, Calendar, TrendingUp, Award, 
-  FileText, Clock, ArrowUpRight, Scale, Ruler, Eye, Stethoscope, ChevronRight 
+  FileText, Clock, ArrowUpRight, Scale, Ruler, Eye, Stethoscope, 
+  ChevronRight, QrCode, Copy, Check, Share2, ShieldCheck, X, Syringe,
+  CalendarCheck, Compass
 } from 'lucide-react';
 import { API } from '../services/api';
 import { useLanguage } from '../context/LanguageContext';
@@ -13,7 +15,9 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [selectedCampId, setSelectedCampId] = useState(null);
-  const [activeView, setActiveView] = useState('summary'); // 'summary' | 'growth' | 'history'
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [preventiveTab, setPreventiveTab] = useState('immunization'); // 'immunization' | 'recalls'
 
   const fetchReportData = async (campId = null) => {
     setLoading(true);
@@ -74,13 +78,22 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
     }
   };
 
+  const handleCopyDeepLink = () => {
+    const deepLink = report?.student_deep_link || `${window.location.origin}/?student_id=${student.student_id}#portal`;
+    navigator.clipboard.writeText(deepLink).then(() => {
+      setCopiedLink(true);
+      if (onToast) onToast(t('dashboard.linkCopied', 'Portal link copied to clipboard!'), 'success');
+      setTimeout(() => setCopiedLink(false), 2500);
+    });
+  };
+
   if (loading && !report) {
     return (
       <div className="py-20 text-center">
         <div className="inline-flex flex-col items-center p-10 bg-white rounded-3xl border border-slate-200 shadow-xl max-w-md w-full">
           <Loader2 className="w-10 h-10 text-shwf-navy animate-spin mb-4" />
           <h4 className="text-lg font-bold text-shwf-navy mb-1">{t('common.loading', 'Analyzing Pediatric Vitals...')}</h4>
-          <p className="text-xs text-slate-500">Calculating exact WHO LMS Z-scores and multi-session growth trajectory.</p>
+          <p className="text-xs text-slate-500">Calculating exact WHO LMS Z-scores, growth forecast, and IAP immunization schedule.</p>
         </div>
       </div>
     );
@@ -94,6 +107,10 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
   const diet = report?.diet_plan || {};
   const campHistory = report?.camp_history || [];
   const growthComp = report?.growth_comparison;
+  const growthForecast = report?.growth_forecast;
+  const immunizations = report?.immunizations || [];
+  const preventiveRecalls = report?.preventive_recalls || [];
+  const qrCodeDataUri = report?.qr_code_data_uri;
 
   const getHazBadge = (z) => {
     if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">{t('dashboard.stuntingRisk', 'Severe Stunting')}</span>;
@@ -114,6 +131,17 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
     if (z < -3.0) return <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">{t('dashboard.thinnessRisk', 'Severe Thinness')}</span>;
     if (z < -2.0) return <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">{t('dashboard.thinnessRisk', 'Thinness Risk')}</span>;
     return <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">{t('dashboard.normal', 'Healthy BMI')}</span>;
+  };
+
+  const getVaccineStatusBadge = (status) => {
+    switch (status) {
+      case 'Completed':
+        return <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[11px] font-extrabold"><CheckCircle2 className="w-3 h-3" /> {t('dashboard.completed', 'Completed')}</span>;
+      case 'Due Soon':
+        return <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[11px] font-extrabold"><Clock className="w-3 h-3" /> {t('dashboard.dueSoon', 'Due Soon')}</span>;
+      default:
+        return <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-[11px] font-extrabold"><Sparkles className="w-3 h-3" /> {t('dashboard.recommended', 'Recommended')}</span>;
+    }
   };
 
   const ageYears = Math.floor((vitals.age_months || 120) / 12);
@@ -194,24 +222,148 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
             </div>
           </div>
 
-          <button
-            onClick={handleDownloadPdf}
-            disabled={downloading}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-black text-sm px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 flex-shrink-0 relative z-10"
-          >
-            {downloading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>{t('dashboard.generatingPdf', 'Generating Certified PDF...')}</span>
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" />
-                <span>{t('dashboard.downloadPdf', 'Download Certified PDF Report')}</span>
-              </>
-            )}
-          </button>
+          <div className="flex items-center gap-3 flex-wrap relative z-10">
+            {/* Point 5: QR Code Share Button */}
+            <button
+              onClick={() => setShowQrModal(true)}
+              className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white font-bold text-sm px-4 sm:px-5 py-3.5 rounded-2xl border border-white/20 shadow-md backdrop-blur-sm transition-all"
+            >
+              <QrCode className="w-4 h-4 text-amber-300" />
+              <span>{t('dashboard.shareHealthCard', 'Health QR')}</span>
+            </button>
+
+            {/* Download Certified PDF Report Button */}
+            <button
+              onClick={handleDownloadPdf}
+              disabled={downloading}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-black text-sm px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 flex-shrink-0"
+            >
+              {downloading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>{t('dashboard.generatingPdf', 'Generating Certified PDF...')}</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  <span>{t('dashboard.downloadPdf', 'Download PDF Report')}</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* ========================================================================= */}
+        {/* ⭐ POINT 7: AI 6 & 12-MONTH PEDIATRIC GROWTH TRAJECTORY FORECASTING ⭐ */}
+        {/* ========================================================================= */}
+        {growthForecast && (
+          <div className="bg-gradient-to-br from-white via-indigo-50/40 to-purple-50/40 rounded-3xl p-6 sm:p-8 border border-indigo-200/80 shadow-lg space-y-5 animate-fadeIn">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-indigo-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-md">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                    {t('dashboard.forecastTitle', 'AI Pediatric Growth Trajectory Forecast')}
+                    <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${
+                      growthForecast.catch_up_recommended 
+                        ? 'bg-amber-100 text-amber-800 border border-amber-300' 
+                        : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                    }`}>
+                      {growthForecast.catch_up_recommended 
+                        ? t('dashboard.catchUpRequiredBadge', 'Nutritional Acceleration Active')
+                        : t('dashboard.normalProgressionBadge', 'Optimal Growth Track')}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-0.5">
+                    {t('dashboard.forecastSubtitle', 'Predictive linear height and weight projections calibrated against WHO growth velocity curves')}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="bg-indigo-100/80 text-indigo-900 px-3 py-1 rounded-xl text-xs font-bold">
+                {t('dashboard.monthlyVelocity', 'Target Velocity')}: <strong>+{growthForecast.six_month_forecast.monthly_height_velocity_cm} cm/mo</strong>
+              </div>
+            </div>
+
+            {/* Trajectory Milestone Progression Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              
+              {/* Milestone 1: Current Baseline */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                  <div className="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2">
+                    {t('dashboard.currentBaseline', 'Current Baseline')}
+                  </div>
+                  <div className="text-2xl font-black text-slate-900 mb-1">
+                    {growthForecast.current_height_cm} <span className="text-sm text-slate-500 font-semibold">cm</span> &bull; {growthForecast.current_weight_kg} <span className="text-sm text-slate-500 font-semibold">kg</span>
+                  </div>
+                  <div className="text-xs text-slate-600 font-medium">
+                    BMI: <strong>{vitals.bmi} kg/m²</strong> (HAZ: {hazVal !== null && hazVal !== undefined ? Number(hazVal).toFixed(2) : '0.00'})
+                  </div>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 font-semibold">
+                  Exam Date: {vitals.recorded_at ? vitals.recorded_at.substring(0, 10) : '2026-08-15'}
+                </div>
+              </div>
+
+              {/* Milestone 2: 6-Month Projected Target */}
+              <div className="bg-white rounded-2xl p-5 border-2 border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-black uppercase px-3 py-0.5 rounded-bl-xl">
+                  +6 Months
+                </div>
+                <div>
+                  <div className="text-[11px] font-black uppercase text-indigo-700 tracking-wider mb-2">
+                    {t('dashboard.sixMonthProjection', '6-Month Projected Target')}
+                  </div>
+                  <div className="text-2xl font-black text-indigo-950 mb-1">
+                    {growthForecast.six_month_forecast.projected_height_cm} <span className="text-sm text-indigo-600 font-semibold">cm</span> &bull; {growthForecast.six_month_forecast.projected_weight_kg} <span className="text-sm text-indigo-600 font-semibold">kg</span>
+                  </div>
+                  <div className="text-xs text-slate-600 font-medium">
+                    {language === 'hi' ? growthForecast.six_month_forecast.interpretation_hi : growthForecast.six_month_forecast.interpretation}
+                  </div>
+                </div>
+                <div className="mt-4 pt-3 border-t border-indigo-100 flex items-center justify-between text-xs font-bold text-indigo-700">
+                  <span>Target HAZ: {growthForecast.six_month_forecast.projected_haz?.toFixed(2)}</span>
+                  <span className="text-emerald-700">+{((growthForecast.six_month_forecast.projected_height_cm - growthForecast.current_height_cm)).toFixed(1)} cm</span>
+                </div>
+              </div>
+
+              {/* Milestone 3: 12-Month Projected Milestone */}
+              <div className="bg-white rounded-2xl p-5 border-2 border-purple-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-black uppercase px-3 py-0.5 rounded-bl-xl">
+                  +12 Months
+                </div>
+                <div>
+                  <div className="text-[11px] font-black uppercase text-purple-700 tracking-wider mb-2">
+                    {t('dashboard.twelveMonthProjection', '12-Month Projected Target')}
+                  </div>
+                  <div className="text-2xl font-black text-purple-950 mb-1">
+                    {growthForecast.twelve_month_forecast.projected_height_cm} <span className="text-sm text-purple-600 font-semibold">cm</span> &bull; {growthForecast.twelve_month_forecast.projected_weight_kg} <span className="text-sm text-purple-600 font-semibold">kg</span>
+                  </div>
+                  <div className="text-xs text-slate-600 font-medium">
+                    {language === 'hi' ? growthForecast.twelve_month_forecast.interpretation_hi : growthForecast.twelve_month_forecast.interpretation}
+                  </div>
+                </div>
+                <div className="mt-4 pt-3 border-t border-purple-100 flex items-center justify-between text-xs font-bold text-purple-700">
+                  <span>Target HAZ: {growthForecast.twelve_month_forecast.projected_haz?.toFixed(2)}</span>
+                  <span className="text-emerald-700">+{((growthForecast.twelve_month_forecast.projected_height_cm - growthForecast.current_height_cm)).toFixed(1)} cm</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Target Dietary Guidance for Forecasting */}
+            <div className="bg-indigo-900/5 border border-indigo-200 rounded-2xl p-4 text-xs text-slate-800 flex items-start gap-3">
+              <Compass className="w-4 h-4 text-indigo-700 flex-shrink-0 mt-0.5" />
+              <div className="leading-relaxed">
+                <strong>{t('dashboard.nutritionalMilestoneStrategy', 'Target Dietary Milestones for Optimal Velocity')}: </strong>
+                {language === 'hi' ? growthForecast.nutritional_milestone_guidance_hi : growthForecast.nutritional_milestone_guidance}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ========================================================================= */}
         {/* ⭐ MULTI-SESSION GROWTH & PHYSICAL DEVELOPMENT COMPARISON MODULE ⭐ */}
@@ -368,6 +520,108 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
 
         </div>
 
+        {/* ========================================================================= */}
+        {/* ⭐ POINT 6: PREVENTIVE IMMUNIZATION & ROUTINE RECALL SCHEDULE TRACKER ⭐ */}
+        {/* ========================================================================= */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center">
+                <Syringe className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-shwf-navy">
+                  {t('dashboard.preventiveTitle', 'Preventive Immunization & Routine Recall Schedule')}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t('dashboard.preventiveSubtitle', 'Age-appropriate IAP booster recommendations and 6-month dental & vision checkup tracker')}
+                </p>
+              </div>
+            </div>
+
+            {/* Sub-Tabs */}
+            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+              <button
+                onClick={() => setPreventiveTab('immunization')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  preventiveTab === 'immunization'
+                    ? 'bg-white text-shwf-navy shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Syringe className="w-3.5 h-3.5 text-teal-600" />
+                <span>{t('dashboard.immunizationTab', 'IAP Immunization')}</span>
+              </button>
+              <button
+                onClick={() => setPreventiveTab('recalls')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  preventiveTab === 'recalls'
+                    ? 'bg-white text-shwf-navy shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <CalendarCheck className="w-3.5 h-3.5 text-shwf-orange" />
+                <span>{t('dashboard.recallTab', 'Routine Recalls')}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Tab 1: IAP Immunization List */}
+          {preventiveTab === 'immunization' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {immunizations.map((item, idx) => (
+                <div key={idx} className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <h4 className="text-sm font-black text-slate-900">
+                        {item.vaccine_name}
+                      </h4>
+                      {getVaccineStatusBadge(item.status)}
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                      {language === 'hi' ? item.description_hi : item.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 pt-2 border-t border-slate-200/60">
+                    <span>{t('dashboard.targetAge', 'Target Age')}: <strong>{item.target_age}</strong></span>
+                    <span>{t('dashboard.doseNumber', 'Dose')}: <strong>{item.dose}</strong></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Tab 2: 6-Month Routine Recalls */}
+          {preventiveTab === 'recalls' && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {preventiveRecalls.map((recall, idx) => (
+                <div key={idx} className="bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-[11px] font-black uppercase text-teal-700 tracking-wider">
+                        {recall.interval_months}-Month Routine Recall
+                      </span>
+                      <span className="text-[10px] bg-amber-100 text-amber-800 font-extrabold px-2 py-0.5 rounded-full">
+                        {recall.status}
+                      </span>
+                    </div>
+                    <h4 className="text-sm font-black text-slate-900 mb-1">
+                      {recall.checkup_type}
+                    </h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {language === 'hi' ? recall.advice_hi : recall.advice}
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-slate-200 text-xs font-bold text-slate-700 flex items-center justify-between">
+                    <span>{t('dashboard.nextDueDate', 'Next Due')}:</span>
+                    <strong className="text-shwf-navy">{recall.next_due_date}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Nutritional & Dietary Advice Card */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md space-y-5">
           <div className="flex items-center gap-2.5 pb-4 border-b border-slate-100">
@@ -476,8 +730,80 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
         )}
 
       </div>
+
+      {/* ========================================================================= */}
+      {/* ⭐ POINT 5: SCANNABLE HEALTH CARD QR CODE MODAL ⭐ */}
+      {/* ========================================================================= */}
+      {showQrModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-sm w-full p-6 text-center relative overflow-hidden">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setShowQrModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-12 h-12 bg-shwf-navy-subtle text-shwf-navy rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <QrCode className="w-6 h-6" />
+            </div>
+
+            <h3 className="text-lg font-black text-slate-900 mb-1">
+              {t('dashboard.qrModalTitle', 'Digital Health Card QR')}
+            </h3>
+            <p className="text-xs text-slate-500 mb-4">
+              {t('dashboard.qrModalSubtitle', 'Instant mobile access to your child\'s complete medical trajectory')}
+            </p>
+
+            {/* QR Image Container */}
+            <div className="bg-slate-50 border-2 border-dashed border-shwf-navy/30 rounded-2xl p-4 mb-4 flex flex-col items-center justify-center">
+              {qrCodeDataUri ? (
+                <img 
+                  src={qrCodeDataUri} 
+                  alt="Student Health Card QR" 
+                  className="w-48 h-48 rounded-xl shadow-md bg-white p-2"
+                />
+              ) : (
+                <div className="w-48 h-48 bg-slate-200 rounded-xl flex items-center justify-center text-slate-400 font-bold text-xs">
+                  QR Code Unavailable
+                </div>
+              )}
+              
+              <div className="mt-3 text-xs font-bold text-shwf-navy">
+                {report?.full_name || student?.full_name} &bull; ID: {report?.student_id || student?.student_id}
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-500 leading-relaxed mb-4">
+              {t('dashboard.scanQrInstructions', 'Scan this QR code with any smartphone camera to open and verify the student health portal.')}
+            </p>
+
+            {/* Actions */}
+            <div className="space-y-2">
+              <button
+                onClick={handleCopyDeepLink}
+                className="w-full inline-flex items-center justify-center gap-2 bg-shwf-navy hover:bg-shwf-navy-dark text-white font-bold text-xs py-3 px-4 rounded-xl shadow-md transition-colors"
+              >
+                {copiedLink ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
+                <span>{copiedLink ? t('dashboard.linkCopied', 'Copied!') : t('dashboard.copyLink', 'Copy Direct Portal Link')}</span>
+              </button>
+
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="w-full text-xs font-bold text-slate-500 hover:text-slate-700 py-2 transition-colors"
+              >
+                {t('common.close', 'Close')}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </section>
   );
 }
+
 
 

@@ -95,6 +95,55 @@ class GrowthComparison(BaseModel):
     growth_assessment_summary: str = Field(..., description="Executive growth velocity interpretation")
 
 
+class ImmunizationItem(BaseModel):
+    """Pediatric immunization record & booster recommendation based on IAP schedule."""
+    vaccine_name: str = Field(..., description="Vaccine name (e.g. Tdap Booster, MMR Dose 2, HPV)")
+    target_age: str = Field(..., description="Recommended age window (e.g. 10-12 Years, 4-6 Years)")
+    dose: str = Field(..., description="Dose number or booster identifier")
+    status: str = Field(..., description="Immunization status: Completed, Due Soon, Overdue, Recommended")
+    description: str = Field(..., description="Clinical purpose in English")
+    description_hi: str = Field(..., description="Clinical purpose in Hindi")
+
+
+class PreventiveRecall(BaseModel):
+    """Preventive recall schedule for dental, vision, and routine pediatric follow-ups."""
+    checkup_type: str = Field(..., description="Type of checkup: Dental Routine Recall, Vision Refraction, Pediatric Exam")
+    last_exam_date: str = Field(..., description="Date of last recorded evaluation")
+    next_due_date: str = Field(..., description="Scheduled next recall due date (e.g. 6 months interval)")
+    interval_months: int = Field(default=6, description="Recall interval in months")
+    status: str = Field(..., description="Recall status: Due Soon, Scheduled, Up to Date, Completed")
+    advice: str = Field(..., description="Preventive clinical instructions in English")
+    advice_hi: str = Field(..., description="Preventive clinical instructions in Hindi")
+
+
+class ForecastMilestone(BaseModel):
+    """Projected anthropometric and developmental milestone for 6 or 12 month horizons."""
+    horizon: str = Field(..., description="Forecast timeline horizon: '6 Months' or '12 Months'")
+    projected_height_cm: float = Field(..., description="Predicted height in cm")
+    projected_weight_kg: float = Field(..., description="Predicted weight in kg")
+    projected_bmi: float = Field(..., description="Predicted BMI in kg/m²")
+    projected_haz: float = Field(..., description="Projected Height-for-Age Z-Score")
+    projected_waz: Optional[float] = Field(default=None, description="Projected Weight-for-Age Z-Score")
+    projected_baz: float = Field(..., description="Projected BMI-for-Age Z-Score")
+    monthly_height_velocity_cm: float = Field(..., description="Projected monthly height increment in cm/month")
+    milestone_status: str = Field(..., description="Expected milestone category in English")
+    milestone_status_hi: str = Field(..., description="Expected milestone category in Hindi")
+    interpretation: str = Field(..., description="Actionable clinical forecast interpretation in English")
+    interpretation_hi: str = Field(..., description="Actionable clinical forecast interpretation in Hindi")
+
+
+class GrowthForecast(BaseModel):
+    """Complete 6 & 12-month AI pediatric growth projection and catch-up trajectory."""
+    current_height_cm: float = Field(..., description="Baseline height in cm")
+    current_weight_kg: float = Field(..., description="Baseline weight in kg")
+    catch_up_recommended: bool = Field(default=False, description="Whether accelerated nutritional catch-up is required")
+    target_catch_up_velocity_cm_yr: float = Field(default=6.0, description="Target height velocity in cm/year for normal/catch-up trajectory")
+    six_month_forecast: ForecastMilestone = Field(..., description="6-month projected milestone")
+    twelve_month_forecast: ForecastMilestone = Field(..., description="12-month projected milestone")
+    nutritional_milestone_guidance: str = Field(..., description="Specific dietary advice to achieve milestone targets (EN)")
+    nutritional_milestone_guidance_hi: str = Field(..., description="Specific dietary advice to achieve milestone targets (HI)")
+
+
 class PredictionReportResponse(BaseModel):
     """Full health risk prediction, dietary recommendation report, and multi-session growth trajectory."""
     student_id: str = Field(..., description="Authenticated student identification number")
@@ -110,6 +159,12 @@ class PredictionReportResponse(BaseModel):
     explanations: List[ExplainabilityItem] = Field(default_factory=list, description="Prediction explainability and threshold logic")
     camp_history: List[CampHistorySummary] = Field(default_factory=list, description="List of all recorded camp visits")
     growth_comparison: Optional[GrowthComparison] = Field(default=None, description="Growth delta comparison against previous camp")
+    qr_code_data_uri: Optional[str] = Field(default=None, description="Base64 embedded scannable QR code data URI")
+    student_deep_link: Optional[str] = Field(default=None, description="Direct URL deep-link to student health portal")
+    immunizations: List[ImmunizationItem] = Field(default_factory=list, description="IAP pediatric immunization schedule & status")
+    preventive_recalls: List[PreventiveRecall] = Field(default_factory=list, description="6-month dental and vision recall schedule")
+    growth_forecast: Optional[GrowthForecast] = Field(default=None, description="AI 6 & 12-month pediatric growth projection")
+
 
 
 class GenerateReportRequest(BaseModel):

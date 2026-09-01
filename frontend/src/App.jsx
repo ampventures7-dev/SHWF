@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TopBar from './components/TopBar';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -21,6 +21,7 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   const [isUserLoginOpen, setIsUserLoginOpen] = useState(false);
+  const [initialStudentId, setInitialStudentId] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [skipInitialOtpDispatch, setSkipInitialOtpDispatch] = useState(false);
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
@@ -29,6 +30,23 @@ export default function App() {
 
   // Toast Notification System
   const [toasts, setToasts] = useState([]);
+
+  // Auto-detect deep-link QR scans (?student_id=...)
+  useEffect(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlStudentId = urlParams.get('student_id');
+      if (urlStudentId) {
+        setInitialStudentId(urlStudentId.trim().toUpperCase());
+        setSelectedStudent({ student_id: urlStudentId.trim().toUpperCase() });
+        setIsUserLoginOpen(true);
+        addToast(`Scanned Health Card for Student: ${urlStudentId}`, 'info');
+      }
+    } catch (e) {
+      console.warn('Could not parse URL query parameters:', e);
+    }
+  }, []);
+
 
   const addToast = (message, type = 'info') => {
     const id = Date.now() + Math.random();
@@ -170,10 +188,12 @@ export default function App() {
       {/* 3. Parent / User OTP Registration & Sign-In Modal */}
       <UserLoginModal
         isOpen={isUserLoginOpen}
+        initialStudentId={initialStudentId}
         onClose={() => setIsUserLoginOpen(false)}
         onOtpRequested={handleUserOtpRequested}
         onToast={addToast}
       />
+
 
       {/* 4. OTP Verification Modal Popup */}
       {isOtpModalOpen && selectedStudent && (

@@ -146,10 +146,17 @@ def prepare_template_context(
     doctor_name = doctor_info.get("doctor_name") or ("डॉ. ए. शर्मा (एमबीबीएस, डीसीएच)" if is_hindi else "Dr. A. Sharma (MBBS, DCH)")
     exam_date = doctor_info.get("exam_date") or recorded_date
 
+    # Ensure scannable QR Code Data URI is present
+    qr_code_data_uri = report_data.qr_code_data_uri
+    if not qr_code_data_uri:
+        from app.services.ml_engine import generate_student_qr_code
+        qr_code_data_uri, _ = generate_student_qr_code(merged_student["student_id"])
+
     return {
         "lang": lang,
         "is_hindi": is_hindi,
         "student": merged_student,
+        "qr_code_data_uri": qr_code_data_uri,
         "vitals": report_data.vitals.model_dump(),
         "zscores": report_data.zscores.model_dump(),
         "risks": [r.model_dump() for r in report_data.risks],
@@ -174,6 +181,7 @@ def prepare_template_context(
         "doctor_name": doctor_name,
         "recorded_date": exam_date,
     }
+
 
 
 def render_report_html(

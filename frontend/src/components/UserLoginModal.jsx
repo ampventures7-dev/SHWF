@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   User,
   Phone,
@@ -20,15 +20,23 @@ export default function UserLoginModal({
   onClose,
   onOtpRequested,
   onToast,
+  initialStudentId,
 }) {
   const { t } = useLanguage();
-  const [studentId, setStudentId] = useState('STD-2026-001');
+  const [studentId, setStudentId] = useState(initialStudentId || 'STD-2026-001');
   const [contactChannel, setContactChannel] = useState('phone'); // 'phone' | 'whatsapp' | 'email'
   const [contactValue, setContactValue] = useState('+919876543210');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  useEffect(() => {
+    if (initialStudentId) {
+      setStudentId(initialStudentId);
+    }
+  }, [initialStudentId, isOpen]);
+
   if (!isOpen) return null;
+
 
   const handleChannelChange = (channel) => {
     setContactChannel(channel);

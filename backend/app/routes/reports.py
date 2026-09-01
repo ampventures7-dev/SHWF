@@ -6,6 +6,14 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from app.core.security import get_verified_student
 from app.core.supabase import DatabaseService, get_db_service
 from app.models.auth import VerifiedStudentClaims
+from app.services.ml_engine import (
+    predict_risks,
+    get_diet_plan,
+    explain_predictions,
+    generate_student_qr_code,
+    generate_preventive_schedule,
+    generate_growth_forecast,
+)
 from app.models.report import (
     PredictReportRequest,
     PredictionReportResponse,
@@ -18,11 +26,15 @@ from app.models.report import (
     ExplainabilityItem,
     CampHistorySummary,
     GrowthComparison,
+    ImmunizationItem,
+    PreventiveRecall,
+    ForecastMilestone,
+    GrowthForecast,
 )
 from app.services.zscore import calculate_zscores
-from app.services.ml_engine import predict_risks, get_diet_plan, explain_predictions
 from app.services.pdf_generator import generate_report_pdf_async
 from app.services.storage_service import StorageService, get_storage_service
+
 
 logger = logging.getLogger(__name__)
 
@@ -253,6 +265,26 @@ async def build_student_prediction_data(
     school_info = student.get("schools")
     school_name = school_info.get("name") if isinstance(school_info, dict) else None
 
+    # 12. Point 5: QR Code & Deep Link
+    qr_data_uri, deep_link = generate_student_qr_code(student["student_id"])
+
+    # 13. Point 6: IAP Immunization & 6-Month Routine Recalls
+    immunizations_raw, recalls_raw = generate_preventive_schedule(
+        age_months=age_months,
+        gender=gender,
+        recorded_date_str=recorded_at_str,
+    )
+
+    # 14. Point 7: AI Growth Forecasting
+    forecast_raw = generate_growth_forecast(
+        current_height_cm=height_cm,
+        current_weight_kg=weight_kg,
+        age_months=age_months,
+        gender=gender,
+        zscores=zscores_dict,
+        camp_history=camp_history,
+    )
+
     report_response = PredictionReportResponse(
         student_id=student["student_id"],
         full_name=student["full_name"],
@@ -279,9 +311,15 @@ async def build_student_prediction_data(
         explanations=[ExplainabilityItem(**exp) for exp in explanations_data],
         camp_history=camp_history,
         growth_comparison=growth_comparison,
+        qr_code_data_uri=qr_data_uri,
+        student_deep_link=deep_link,
+        immunizations=[ImmunizationItem(**item) for item in immunizations_raw],
+        preventive_recalls=[PreventiveRecall(**recall) for recall in recalls_raw],
+        growth_forecast=GrowthForecast(**forecast_raw) if forecast_raw else None,
     )
 
     return report_response, student, camp_extra_data
+
 
 
 @router.post(
