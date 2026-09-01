@@ -119,14 +119,15 @@ export default function UserLoginModal({
           </div>
           <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-[11px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full mb-2 border border-emerald-200">
             <ShieldCheck className="w-3 h-3 text-emerald-600" />
-            <span>{t('userLogin.title', 'Parent Direct Sign-In')}</span>
+            <span>{t('userLogin.title', 'Parent Registration & Sign-In')}</span>
           </div>
           <h3 className="text-2xl font-black text-shwf-navy tracking-tight">
-            {t('userLogin.title', 'Parent Direct Sign-In')}
+            {t('userLogin.title', 'Parent Registration & Sign-In')}
           </h3>
           <p className="text-xs text-slate-500 mt-1">
-            {t('userLogin.subtitle', 'Enter your child\'s Student ID and registered Mobile / Email to receive an OTP.')}
+            {t('userLogin.subtitle', 'Enter your child\'s Student ID and registered Mobile number to register or sign-in with instant 6-digit OTP verification.')}
           </p>
+
         </div>
 
         {/* Error Alert */}

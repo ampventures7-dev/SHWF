@@ -22,12 +22,15 @@ export const translations = {
       gallery: "Camp Gallery",
       donate: "Donate & Bank Details",
       about: "About Us",
-      parentSignIn: "Parent Sign-In (OTP)",
-      studentActive: "Student Session Active",
+      parentSignIn: "Parent Register & Sign-In",
+      parentRegisterSignIn: "Parent Register & Sign-In",
+      studentActive: "Parent Session Active",
+      parentActive: "Parent Session Active",
       adminPortal: "Admin Portal",
       adminIngestion: "Admin Ingestion",
       donateNow: "Donate Now",
     },
+
 
     hero: {
       badge: "National School Health & Nutrition Surveillance Initiative",
@@ -376,12 +379,15 @@ export const translations = {
       gallery: "फोटो गैलरी",
       donate: "दान एवं बैंक",
       about: "हमारे बारे में",
-      parentSignIn: "अभिभावक लॉगिन (OTP)",
-      studentActive: "सक्रिय छात्र सत्र",
+      parentSignIn: "अभिभावक पंजीकरण एवं लॉगिन",
+      parentRegisterSignIn: "अभिभावक पंजीकरण एवं लॉगिन",
+      studentActive: "अभिभावक सत्र सक्रिय",
+      parentActive: "अभिभावक सत्र सक्रिय",
       adminPortal: "एडमिन पोर्टल",
       adminIngestion: "एडमिन डेटा प्रविष्टि",
       donateNow: "दान करें",
     },
+
 
     hero: {
       badge: "राष्ट्रीय विद्यालय स्वास्थ्य एवं पोषण निगरानी पहल",

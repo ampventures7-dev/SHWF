@@ -45,7 +45,7 @@ export default function Navbar({
 
           {/* Action Buttons */}
           <div className="hidden lg:flex items-center gap-1.5 xl:gap-2 flex-shrink-0">
-            {/* Parent Sign-In Button */}
+            {/* Parent Register & Sign-In Button */}
             <button
               onClick={onOpenUserLogin}
               className="inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 font-bold text-xs px-3 py-2 rounded-full shadow-sm hover:shadow transition-all whitespace-nowrap cursor-pointer"
@@ -53,16 +53,17 @@ export default function Navbar({
               {isUserLoggedIn ? (
                 <>
                   <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="hidden xl:inline">{t('nav.studentActive', 'Student Session Active')}</span>
+                  <span className="hidden xl:inline">{t('nav.parentActive', 'Parent Session Active')}</span>
                   <span className="xl:hidden">Active</span>
                 </>
               ) : (
                 <>
                   <KeyRound className="w-3.5 h-3.5 text-amber-600" />
-                  <span>{t('nav.parentSignIn', 'Parent Sign-In (OTP)')}</span>
+                  <span>{t('nav.parentRegisterSignIn', 'Parent Register & Sign-In')}</span>
                 </>
               )}
             </button>
+
 
             {/* Admin Ingestion Button */}
             <button
@@ -147,8 +148,9 @@ export default function Navbar({
                   className="flex items-center justify-center gap-2 bg-amber-50 border border-amber-300 text-amber-900 font-bold text-sm py-2.5 rounded-xl shadow-sm"
                 >
                   <KeyRound className="w-4 h-4 text-amber-600" />
-                  <span>{t('nav.parentSignIn', 'Parent Sign-In (OTP Verification)')}</span>
+                  <span>{t('nav.parentRegisterSignIn', 'Parent Register & Sign-In')}</span>
                 </button>
+
 
                 <button
                   onClick={() => {

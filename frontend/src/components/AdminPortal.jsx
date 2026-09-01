@@ -86,13 +86,20 @@ export default function AdminPortal({ isOpen, onClose, onToast, adminToken, onSi
   // 1. Handle CSV Template Download
   const handleDownloadTemplate = (type = 'full') => {
     try {
-      window.open(`/admin/students/template?template_type=${type}`, '_blank');
-      const label = type === 'full' ? 'Comprehensive Complete Health Check-Up' : 'Basic Enrollment';
-      if (onToast) onToast(`Downloading ${label} CSV template...`, 'info');
+      const filename = type === 'full' ? 'sample_student_health_camp_data.csv' : 'sample_basic_student_enrollment.csv';
+      const a = document.createElement('a');
+      a.href = `/${filename}`;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      const label = type === 'full' ? 'Comprehensive Health Check-Up' : 'Basic Enrollment';
+      if (onToast) onToast(`Downloaded ${label} CSV sample!`, 'success');
     } catch (err) {
-      if (onToast) onToast('Failed to download template', 'error');
+      window.open(`/admin/students/template?template_type=${type}`, '_blank');
     }
   };
+
 
   // 2. Handle File Selection
   const handleFileChange = (e) => {
