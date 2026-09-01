@@ -71,13 +71,17 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Hero Feature Card */}
+          {/* Right Card: Strategic Value Pillars */}
           <div className="lg:col-span-5">
             <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl relative">
               <div className="flex items-center justify-between border-b border-white/15 pb-5 mb-6">
                 <div>
-                  <h3 className="text-xl font-bold text-white">Our Core Mission</h3>
-                  <p className="text-xs text-slate-300 mt-0.5">Empowering every child with wellness & education</p>
+                  <h3 className="text-xl font-bold text-white">
+                    {t('hero.missionTitle', 'Our Core Mission')}
+                  </h3>
+                  <p className="text-xs text-slate-300 mt-0.5">
+                    {t('hero.missionSubtitle', 'Empowering every child with wellness & education')}
+                  </p>
                 </div>
                 <div className="w-12 h-12 rounded-2xl bg-shwf-orange/20 border border-shwf-orange/40 flex items-center justify-center text-shwf-orange">
                   <HeartHandshake className="w-6 h-6" />
@@ -90,8 +94,10 @@ export default function Hero() {
                     ✓
                   </div>
                   <div>
-                    <strong className="text-white block font-semibold">School Health Camps</strong>
-                    On-ground pediatric screenings, vitals recording, and vision/dental evaluations.
+                    <strong className="text-white block font-semibold">
+                      {t('hero.missionItem1Title', 'School Health Camps')}
+                    </strong>
+                    {t('hero.missionItem1Desc', 'On-ground pediatric screenings, vitals recording, and vision/dental evaluations.')}
                   </div>
                 </div>
 
@@ -100,8 +106,10 @@ export default function Hero() {
                     ✓
                   </div>
                   <div>
-                    <strong className="text-white block font-semibold">WHO Growth Z-Score Diagnostics</strong>
-                    Scientific identification of stunting, wasting, underweight, and BMI anomalies.
+                    <strong className="text-white block font-semibold">
+                      {t('hero.missionItem2Title', 'WHO Growth Z-Score Diagnostics')}
+                    </strong>
+                    {t('hero.missionItem2Desc', 'Scientific identification of stunting, wasting, underweight, and BMI anomalies.')}
                   </div>
                 </div>
 
@@ -110,14 +118,18 @@ export default function Hero() {
                     ✓
                   </div>
                   <div>
-                    <strong className="text-white block font-semibold">Customized Indian Nutrition Plans</strong>
-                    Prescribed regional diet strategies to eliminate child malnutrition.
+                    <strong className="text-white block font-semibold">
+                      {t('hero.missionItem3Title', 'Customized Indian Nutrition Plans')}
+                    </strong>
+                    {t('hero.missionItem3Desc', 'Prescribed regional diet strategies to eliminate child malnutrition.')}
                   </div>
                 </div>
               </div>
 
               <div className="mt-6 pt-5 border-t border-white/15 flex items-center justify-between">
-                <span className="text-xs text-slate-300">Quick Parent Access:</span>
+                <span className="text-xs text-slate-300">
+                  {t('hero.quickParentAccess', 'Quick Parent Access:')}
+                </span>
                 <a
                   href="#portal"
                   className="text-xs font-bold text-shwf-orange hover:text-amber-300 flex items-center gap-1 transition-colors"
