@@ -13,45 +13,64 @@ logger = logging.getLogger(__name__)
 
 
 def list_all_states(db_service: DatabaseService) -> List[StateResponse]:
-    """Retrieve all states for cascading dropdown."""
+    """Retrieve all 28 States and 8 UTs for cascading dropdown."""
+    all_states = get_all_india_states()
+    db_map = {}
     try:
         raw_data = db_service.get_all_states()
-        if raw_data and len(raw_data) > 0:
-            return [StateResponse(id=str(row["id"]), name=row["name"]) for row in raw_data]
+        if raw_data:
+            db_map = {row["name"].strip().lower(): str(row["id"]) for row in raw_data}
     except Exception as e:
-        logger.warning(f"Failed to fetch states from database, using all-India geo data: {e}")
+        logger.warning(f"Failed to fetch states from database, using complete fallback: {e}")
 
-    # Fallback to comprehensive all-India 28 states + 8 UTs
-    all_states = get_all_india_states()
-    return [StateResponse(id=str(s["id"]), name=s["name"]) for s in all_states]
+    result = []
+    for s in all_states:
+        s_name = s["name"]
+        s_id = db_map.get(s_name.strip().lower(), str(s["id"]))
+        result.append(StateResponse(id=s_id, name=s_name))
+    return result
 
 
 def list_districts_by_state(state_id: str, db_service: DatabaseService) -> List[DistrictResponse]:
-    """Retrieve all districts within a state."""
+    """Retrieve all official districts within a state."""
+    state_name = None
+    db_dist_map = {}
+    
+    # Try finding state name if state_id is a DB UUID
     try:
-        raw_data = db_service.get_districts_by_state(state_id=state_id)
-        if raw_data and len(raw_data) > 0:
-            return [
-                DistrictResponse(
-                    id=str(row["id"]),
-                    state_id=str(row["state_id"]),
-                    name=row["name"]
-                )
-                for row in raw_data
-            ]
+        raw_states = db_service.get_all_states()
+        if raw_states:
+            for st in raw_states:
+                if str(st["id"]).lower() == state_id.strip().lower():
+                    state_name = st["name"]
+                    break
+                    
+        raw_dists = db_service.get_districts_by_state(state_id=state_id)
+        if raw_dists:
+            db_dist_map = {row["name"].strip().lower(): str(row["id"]) for row in raw_dists}
     except Exception as e:
-        logger.warning(f"Failed to fetch districts from database for state {state_id}: {e}")
+        logger.warning(f"Failed to fetch from DB for state {state_id}: {e}")
 
-    # Fallback to complete state districts
-    districts = get_india_districts_by_state(state_id)
-    return [
-        DistrictResponse(
-            id=str(d["id"]),
-            state_id=str(d["state_id"]),
-            name=d["name"]
+    # Complete geo districts
+    lookup_key = state_name if state_name else state_id
+    districts = get_india_districts_by_state(lookup_key)
+
+    result = []
+    seen = set()
+    for d in districts:
+        d_name = d["name"]
+        if d_name.lower() in seen:
+            continue
+        seen.add(d_name.lower())
+        d_id = db_dist_map.get(d_name.strip().lower(), str(d["id"]))
+        result.append(
+            DistrictResponse(
+                id=d_id,
+                state_id=state_id,
+                name=d_name
+            )
         )
-        for d in districts
-    ]
+    return result
 
 
 def list_schools_by_district(district_id: str, db_service: DatabaseService) -> List[SchoolResponse]:

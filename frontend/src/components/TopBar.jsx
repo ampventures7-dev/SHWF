@@ -7,9 +7,9 @@ export default function TopBar() {
 
   return (
     <div className="bg-shwf-navy-dark text-slate-100 text-xs sm:text-sm font-medium py-2.5 sm:py-3 border-b border-white/10 shadow-sm">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-2.5 sm:gap-3 text-center sm:text-left">
         {/* Left: Registration Badge */}
-        <div className="flex items-center flex-shrink-0">
+        <div className="flex items-center justify-center flex-shrink-0">
           <span className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/25 text-white text-xs sm:text-[13px] font-extrabold px-3.5 py-1 rounded-md shadow-sm transition-colors whitespace-nowrap">
             <ShieldCheck className="w-4 h-4 text-shwf-orange shrink-0" />
             <span>{t('common.regNo', 'Reg. No. 04/16/03/20319/24')}</span>
@@ -24,7 +24,7 @@ export default function TopBar() {
         </div>
 
         {/* Right: Helpline & Language Switcher */}
-        <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+        <div className="flex items-center justify-center gap-2.5 sm:gap-3 flex-shrink-0">
           {/* Language Switcher Button */}
           <div className="inline-flex items-center bg-white/10 border border-white/20 rounded-lg p-0.5 shadow-inner">
             <button

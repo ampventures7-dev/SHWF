@@ -1,9 +1,9 @@
 import React from 'react';
-import { ShieldCheck, Award, Users, CheckCircle2, ArrowRight, HeartHandshake, QrCode } from 'lucide-react';
+import { ShieldCheck, Award, Users, CheckCircle2, ArrowRight, HeartHandshake, QrCode, KeyRound } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function Hero() {
-  const { t } = useLanguage();
+export default function Hero({ onOpenUserLogin }) {
+  const { t, language } = useLanguage();
 
   return (
     <section id="home" className="relative bg-gradient-to-br from-shwf-navy-dark via-shwf-navy to-[#003882] text-white pt-16 pb-28 overflow-hidden">
@@ -15,15 +15,15 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Column: Mission Headline & CTAs */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
             {/* Pill Tag */}
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#a7f3d0] mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#a7f3d0] mb-6 mx-auto lg:mx-0">
               <span className="w-2 h-2 rounded-full bg-shwf-green animate-ping"></span>
               {t('hero.badge', 'National School Health & Nutrition Surveillance Initiative')}
             </div>
 
             {/* Main Title */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black leading-[1.15] text-white tracking-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black leading-[1.15] text-white tracking-tight mb-6 max-w-2xl lg:max-w-none">
               {t('hero.titleStart', 'Building a')}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-shwf-orange">
                 {t('hero.titleHighlight', 'Healthier, Educated')}
@@ -32,40 +32,53 @@ export default function Hero() {
             </h1>
 
             {/* Lead Narrative */}
-            <p className="text-base sm:text-lg text-slate-200 leading-relaxed mb-8 max-w-2xl">
+            <p className="text-base sm:text-lg text-slate-200 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0 font-normal">
               {t('hero.subtitle', 'Smart Health Welfare Foundation is committed to grassroots child nutrition, comprehensive school health screenings, WHO LMS growth assessments, and preventive pediatric interventions across India.')}
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-4 items-center mb-10">
+            {/* CTAs with Prominent Parent Login */}
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3.5 sm:gap-4 items-center justify-center lg:justify-start w-full sm:w-auto mb-10">
+              {/* 1. Direct Parent Login Button (Most Important) */}
+              <button
+                type="button"
+                onClick={onOpenUserLogin}
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-base px-8 py-3.5 rounded-full shadow-2xl hover:shadow-amber-500/50 transition-all transform hover:-translate-y-0.5 cursor-pointer ring-2 ring-amber-300/80 active:scale-95"
+              >
+                <KeyRound className="w-5 h-5 text-slate-950 shrink-0" />
+                <span>{language === 'hi' ? 'अभिभावक लॉगिन (हेल्थ कार्ड)' : 'Parent Login (Health Card)'}</span>
+              </button>
+
+              {/* 2. Donate CTA */}
               <a
                 href="#donate"
-                className="inline-flex items-center gap-2.5 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-bold text-base px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 pulse-button"
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 bg-gradient-to-r from-shwf-orange to-amber-500 hover:from-shwf-orange-dark hover:to-shwf-orange text-white font-bold text-base px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 pulse-button cursor-pointer"
               >
                 <HeartHandshake className="w-5 h-5" />
                 <span>{t('nav.donateNow', 'Donate & Support')}</span>
               </a>
+
+              {/* 3. Search Student Records */}
               <a
                 href="#portal"
-                className="inline-flex items-center gap-2.5 bg-white/15 hover:bg-white text-white hover:text-shwf-navy border border-white/40 font-bold text-base px-7 py-3.5 rounded-full backdrop-blur-md transition-all"
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2 bg-white/15 hover:bg-white text-white hover:text-shwf-navy border border-white/40 font-bold text-sm px-6 py-3.5 rounded-full backdrop-blur-md transition-all cursor-pointer"
               >
-                <span>{t('hero.searchCta', 'Search Child Health Record')}</span>
+                <span>{t('hero.searchCta', 'Search School Records')}</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
 
             {/* Quick Guarantees */}
-            <div className="flex flex-wrap items-center gap-6 text-xs text-slate-300">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-xs text-slate-300">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-shwf-green" />
+                <CheckCircle2 className="w-4 h-4 text-shwf-green shrink-0" />
                 <span>Govt. Registered NGO (Sec 8)</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-shwf-green" />
+                <CheckCircle2 className="w-4 h-4 text-shwf-green shrink-0" />
                 <span>Certified Medical Doctors</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-shwf-green" />
+                <CheckCircle2 className="w-4 h-4 text-shwf-green shrink-0" />
                 <span>WHO LMS Anthro Analytics</span>
               </div>
             </div>

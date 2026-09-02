@@ -32,8 +32,10 @@ wheels/
 
 # Secrets & Environment Variables
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+backend/.env
+frontend/.env
 
 # Testing & Coverage
 .pytest_cache/

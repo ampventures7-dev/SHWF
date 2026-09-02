@@ -9,7 +9,9 @@ import {
   getSchoolsForDistrict
 } from '../data/indiaGeoData';
 
-const API_BASE = import.meta.env.VITE_API_URL || ""; // Supports custom backend domain or relative proxy in production
+// In local dev, empty string uses Vite dev proxy to localhost:8001
+// In production, this reads from VITE_API_BASE_URL or VITE_API_URL in frontend/.env
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 
 export const API = {
@@ -18,10 +20,9 @@ export const API = {
       const res = await fetch(`${API_BASE}/public/states`);
       if (!res.ok) throw new Error("Failed to load states from backend");
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 3) {
+      if (Array.isArray(data) && data.length >= 28) {
         return data;
       }
-      // If backend returns only 3 seeds, return full all-India states
       return getAllStates();
     } catch (e) {
       return getAllStates();

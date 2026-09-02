@@ -35,21 +35,31 @@ export default function App() {
   // Toast Notification System
   const [toasts, setToasts] = useState([]);
 
-  // Auto-detect deep-link QR scans (?student_id=...)
+  // Auto-detect deep-link QR scans (?student_id=...) or Direct Staff /admin routes
   useEffect(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const urlStudentId = urlParams.get('student_id');
+      const pathname = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      const isAdminRoute = pathname.includes('/admin') || urlParams.has('admin') || hash === '#admin';
+
       if (urlStudentId) {
         setInitialStudentId(urlStudentId.trim().toUpperCase());
         setSelectedStudent({ student_id: urlStudentId.trim().toUpperCase() });
         setIsUserLoginOpen(true);
         addToast(`Scanned Health Card for Student: ${urlStudentId}`, 'info');
+      } else if (isAdminRoute) {
+        if (adminToken) {
+          setIsAdminOpen(true);
+        } else {
+          setIsAdminLoginOpen(true);
+        }
       }
     } catch (e) {
-      console.warn('Could not parse URL query parameters:', e);
+      console.warn('Could not parse URL parameters:', e);
     }
-  }, []);
+  }, [adminToken]);
 
 
   const addToast = (message, type = 'info') => {
@@ -141,7 +151,7 @@ export default function App() {
       />
 
       {/* 1. Hero Section */}
-      <Hero />
+      <Hero onOpenUserLogin={handleOpenUserLogin} />
 
       {/* 2. Student Health Portal OR Active Digital Health Dashboard */}
       {activeDashboardStudent && authToken ? (
@@ -176,7 +186,7 @@ export default function App() {
       <EnquiryForm onToast={addToast} />
 
       {/* 8. Official Noble NGO Footer (Strictly NO EMAIL) */}
-      <Footer />
+      <Footer onOpenAdmin={handleOpenAdmin} isAdminLoggedIn={!!adminToken} />
 
 
 
