@@ -140,6 +140,7 @@ export const translations = {
       switchCamp: "Select Camp Visit Date",
       downloadPdf: "Download Certified PDF Report",
       generatingPdf: "Generating Certified PDF...",
+      pdfSuccess: "Certified Health Report Card downloaded successfully!",
       signOut: "Exit Session",
       
       // Growth Comparison Section
@@ -497,6 +498,7 @@ export const translations = {
       switchCamp: "स्वास्थ्य शिविर जांच तिथि चुनें",
       downloadPdf: "प्रमाणित स्वास्थ्य रिपोर्ट कार्ड डाउनलोड करें",
       generatingPdf: "प्रमाणित पीडीएफ तैयार की जा रही है...",
+      pdfSuccess: "प्रमाणित स्वास्थ्य रिपोर्ट कार्ड सफलतापूर्वक डाउनलोड हो गया!",
       signOut: "सत्र समाप्त करें",
       
       // Growth Comparison Section

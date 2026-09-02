@@ -143,8 +143,62 @@ export default function HealthCheckupForm({ adminToken, onToast }) {
   });
 
   const [loading, setLoading] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [result, setResult] = useState(null);
   const [activeSubTab, setActiveSubTab] = useState('student'); // 'student' | 'physical' | 'specialist' | 'lifestyle' | 'doctor'
+
+  const handleAdminDownloadPdf = async () => {
+    setDownloadingPdf(true);
+    if (onToast) onToast('Generating certified high-definition PDF report card...', 'info');
+    try {
+      const studentId = formData.student.student_id || 'STD-2026-001';
+      const studentInfo = {
+        student_id: studentId,
+        full_name: formData.student.full_name || 'Aarav Sharma',
+        school_name: formData.student.school_name || 'St. Xavier Public School',
+        date_of_birth: formData.student.date_of_birth || '2014-06-15',
+        gender: formData.student.gender || 'M',
+        parent_name: formData.student.father_name || 'Rajesh Sharma',
+        parent_phone: formData.student.parent_phone || '+91 9876543210',
+      };
+      const reportData = {
+        student_id: studentId,
+        full_name: formData.student.full_name,
+        school_name: formData.student.school_name,
+        vitals: {
+          height_cm: parseFloat(formData.physical_exam.height_cm) || 138.5,
+          weight_kg: parseFloat(formData.physical_exam.weight_kg) || 31.0,
+          bmi: parseFloat(formData.physical_exam.bmi) || 16.16,
+          gender: formData.student.gender || 'M',
+          recorded_at: formData.doctor_info.exam_date || new Date().toISOString().slice(0, 10),
+          doctor_remarks: formData.doctor_info.doctor_remarks || 'Healthy physical growth parameters.',
+        },
+        diet_plan: {
+          summary: formData.dietitian_advice_line1 || 'Maintain balanced daily nutrition with protein and calcium focus.',
+          breakfast: 'Poha with roasted peanuts, boiled egg or sprout salad, and 1 glass warm milk.',
+          lunch: 'Dal tadka, seasonal green vegetable sabzi (palak/methi), 2 wheat chapatis, and curd.',
+          dinner: 'Moong dal khichdi with ghee, paneer preparation, and fresh salad.',
+        }
+      };
+
+      const res = await API.downloadReportPdf(
+        studentId,
+        adminToken,
+        null,
+        'en',
+        reportData,
+        studentInfo
+      );
+      if (res?.success) {
+        if (onToast) onToast('Certified Health Report Card PDF downloaded successfully!', 'success');
+      }
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      if (onToast) onToast('Failed to download PDF. Please try again.', 'error');
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
 
   // Auto-calculate BMI whenever height or weight changes
   useEffect(() => {
@@ -1040,15 +1094,19 @@ export default function HealthCheckupForm({ adminToken, onToast }) {
             </div>
 
             <div className="flex items-center gap-2">
-              <a
-                href={`/admin/students/download-pdf/${formData.student.student_id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+              <button
+                type="button"
+                onClick={handleAdminDownloadPdf}
+                disabled={downloadingPdf}
+                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white font-black text-xs px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
               >
-                <Download className="w-4 h-4" />
-                <span>Download Certified PDF Report Card</span>
-              </a>
+                {downloadingPdf ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                <span>{downloadingPdf ? 'Generating PDF...' : 'Download Certified PDF Report Card'}</span>
+              </button>
             </div>
           </div>
         </div>

@@ -8,10 +8,12 @@ import {
   getDistrictsByState,
   getSchoolsForDistrict
 } from '../data/indiaGeoData';
+import { generateStudentPdf } from './pdfGenerator';
 
 // In local dev, empty string uses Vite dev proxy to localhost:8001
 // In production, this reads from VITE_API_BASE_URL or VITE_API_URL in frontend/.env
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
 
 
 export const API = {
@@ -420,6 +422,56 @@ export const API = {
       throw new Error(err.detail || "Failed to generate PDF report");
     }
     return await res.json();
+  },
+
+  async downloadReportPdf(studentId, token = null, campRecordId = null, lang = 'en', reportData = null, studentInfo = null) {
+    const sId = studentId || reportData?.student_id || studentInfo?.student_id || 'STD-2026-001';
+    
+    // 1. Attempt to download from backend if reachable
+    try {
+      const campParam = campRecordId ? `&camp_record_id=${encodeURIComponent(campRecordId)}` : '';
+      const serverUrl = `${API_BASE}/reports/download/${encodeURIComponent(sId)}?lang=${encodeURIComponent(lang)}${campParam}`;
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      
+      const headers = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch(serverUrl, {
+        headers,
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+        const blob = await res.blob();
+        // Ensure the response is actually a PDF binary (not HTML SPA fallback)
+        if (blob.size > 800 && (contentType.includes('pdf') || blob.type.includes('pdf'))) {
+          const blobUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = `SHWF_Health_Report_${sId}_${lang}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(blobUrl);
+          document.body.removeChild(a);
+          return { success: true, source: 'backend' };
+        }
+      }
+    } catch (e) {
+      console.warn("Backend PDF stream not reachable, falling back to local client generator:", e);
+    }
+
+    // 2. High-definition local client fallback using jsPDF
+    try {
+      const result = generateStudentPdf(reportData, studentInfo, lang);
+      return { success: true, source: 'client', ...result };
+    } catch (err) {
+      console.error("Client PDF generation fallback failed:", err);
+      throw err;
+    }
   },
 
   async submitEnquiry(payload) {

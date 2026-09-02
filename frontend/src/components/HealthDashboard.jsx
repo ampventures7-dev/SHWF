@@ -51,31 +51,21 @@ export default function HealthDashboard({ student, token, onBack, onToast }) {
     setDownloading(true);
     if (onToast) onToast(t('dashboard.generatingPdf', 'Generating certified high-definition PDF report card...'), 'info');
     try {
-      const campParam = selectedCampId ? `&camp_record_id=${encodeURIComponent(selectedCampId)}` : '';
-      const downloadUrl = `/reports/download/${student.student_id}?lang=${language}${campParam}`;
-      
-      const res = await fetch(downloadUrl, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (res.ok) {
-        const blob = await res.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = `SHWF_Health_Report_${student.student_id}_${language}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(blobUrl);
-        document.body.removeChild(a);
-        if (onToast) onToast('Certified PDF Report downloaded successfully!', 'success');
-      } else {
-        window.open(downloadUrl, '_blank');
+      const studentId = student?.student_id || report?.student_id || 'STD-2026-001';
+      const res = await API.downloadReportPdf(
+        studentId,
+        token,
+        selectedCampId,
+        language,
+        report,
+        student
+      );
+      if (res?.success) {
+        if (onToast) onToast(t('dashboard.pdfSuccess', 'Certified Health Report Card downloaded successfully!'), 'success');
       }
     } catch (err) {
-      console.error(err);
-      window.open(`/reports/download/${student.student_id}?lang=${language}`, '_blank');
-      if (onToast) onToast('PDF report opened in new tab', 'info');
+      console.error('PDF download error:', err);
+      if (onToast) onToast('Failed to download PDF. Please try again.', 'error');
     } finally {
       setDownloading(false);
     }
